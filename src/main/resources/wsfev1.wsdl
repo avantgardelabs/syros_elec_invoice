@@ -1,0 +1,1147 @@
+<definitions name='Wsfev1Service' targetNamespace='http://servicios.conector.esphora.syntagma.com.ar/' xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:ns1='http://ar.gov.afip.dif.FEV1/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:tns='http://servicios.conector.esphora.syntagma.com.ar/' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+ <types>
+  <xs:schema elementFormDefault='qualified' targetNamespace='http://ar.gov.afip.dif.FEV1/' version='1.0' xmlns:tns='http://ar.gov.afip.dif.FEV1/' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+   <xs:complexType name='FECAERequest'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='FeCabReq' type='tns:FECAECabRequest'/>
+     <xs:element minOccurs='0' name='FeDetReq' type='tns:ArrayOfFECAEDetRequest'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAECabRequest'>
+    <xs:complexContent>
+     <xs:extension base='tns:FECabRequest'>
+      <xs:sequence/>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='FECabRequest'>
+    <xs:sequence>
+     <xs:element name='CantReg' type='xs:int'/>
+     <xs:element name='PtoVta' type='xs:int'/>
+     <xs:element name='CbteTipo' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEACabRequest'>
+    <xs:complexContent>
+     <xs:extension base='tns:FECabRequest'>
+      <xs:sequence/>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfFECAEDetRequest'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='FECAEDetRequest' nillable='true' type='tns:FECAEDetRequest'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEDetRequest'>
+    <xs:complexContent>
+     <xs:extension base='tns:FEDetRequest'>
+      <xs:sequence/>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='FEDetRequest'>
+    <xs:sequence>
+     <xs:element name='Concepto' type='xs:int'/>
+     <xs:element name='DocTipo' type='xs:int'/>
+     <xs:element name='DocNro' type='xs:long'/>
+     <xs:element name='CbteDesde' type='xs:long'/>
+     <xs:element name='CbteHasta' type='xs:long'/>
+     <xs:element minOccurs='0' name='CbteFch' type='xs:string'/>
+     <xs:element name='ImpTotal' type='xs:double'/>
+     <xs:element name='ImpTotConc' type='xs:double'/>
+     <xs:element name='ImpNeto' type='xs:double'/>
+     <xs:element name='ImpOpEx' type='xs:double'/>
+     <xs:element name='ImpTrib' type='xs:double'/>
+     <xs:element name='ImpIVA' type='xs:double'/>
+     <xs:element minOccurs='0' name='FchServDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchServHasta' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchVtoPago' type='xs:string'/>
+     <xs:element minOccurs='0' name='MonId' type='xs:string'/>
+     <xs:element name='MonCotiz' type='xs:double'/>
+     <xs:element minOccurs='0' name='CbtesAsoc' type='tns:ArrayOfCbteAsoc'/>
+     <xs:element minOccurs='0' name='Tributos' type='tns:ArrayOfTributo'/>
+     <xs:element minOccurs='0' name='Iva' type='tns:ArrayOfAlicIva'/>
+     <xs:element minOccurs='0' name='Opcionales' type='tns:ArrayOfOpcional'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfCbteAsoc'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='CbteAsoc' nillable='true' type='tns:CbteAsoc'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='CbteAsoc'>
+    <xs:sequence>
+     <xs:element name='Tipo' type='xs:int'/>
+     <xs:element name='PtoVta' type='xs:int'/>
+     <xs:element name='Nro' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfTributo'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='Tributo' nillable='true' type='tns:Tributo'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='Tributo'>
+    <xs:sequence>
+     <xs:element name='Id' type='xs:short'/>
+     <xs:element minOccurs='0' name='Desc' type='xs:string'/>
+     <xs:element name='BaseImp' type='xs:double'/>
+     <xs:element name='Alic' type='xs:double'/>
+     <xs:element name='Importe' type='xs:double'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfAlicIva'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='AlicIva' nillable='true' type='tns:AlicIva'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='AlicIva'>
+    <xs:sequence>
+     <xs:element name='Id' type='xs:int'/>
+     <xs:element name='BaseImp' type='xs:double'/>
+     <xs:element name='Importe' type='xs:double'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfOpcional'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='Opcional' nillable='true' type='tns:Opcional'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='Opcional'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='Id' type='xs:string'/>
+     <xs:element minOccurs='0' name='Valor' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEADetRequest'>
+    <xs:complexContent>
+     <xs:extension base='tns:FEDetRequest'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='CAEA' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='FECompConsResponse'>
+    <xs:complexContent>
+     <xs:extension base='tns:FECAEDetRequest'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='Resultado' type='xs:string'/>
+       <xs:element minOccurs='0' name='CodAutorizacion' type='xs:string'/>
+       <xs:element minOccurs='0' name='EmisionTipo' type='xs:string'/>
+       <xs:element minOccurs='0' name='FchVto' type='xs:string'/>
+       <xs:element minOccurs='0' name='FchProceso' type='xs:string'/>
+       <xs:element minOccurs='0' name='Observaciones' type='tns:ArrayOfObs'/>
+       <xs:element name='PtoVta' type='xs:int'/>
+       <xs:element name='CbteTipo' type='xs:int'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfObs'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='Obs' nillable='true' type='tns:Obs'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='Obs'>
+    <xs:sequence>
+     <xs:element name='Code' type='xs:int'/>
+     <xs:element minOccurs='0' name='Msg' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='FeCabResp' type='tns:FECAECabResponse'/>
+     <xs:element minOccurs='0' name='FeDetResp' type='tns:ArrayOfFECAEDetResponse'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAECabResponse'>
+    <xs:complexContent>
+     <xs:extension base='tns:FECabResponse'>
+      <xs:sequence/>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='FECabResponse'>
+    <xs:sequence>
+     <xs:element name='Cuit' type='xs:long'/>
+     <xs:element name='PtoVta' type='xs:int'/>
+     <xs:element name='CbteTipo' type='xs:int'/>
+     <xs:element minOccurs='0' name='FchProceso' type='xs:string'/>
+     <xs:element name='CantReg' type='xs:int'/>
+     <xs:element minOccurs='0' name='Resultado' type='xs:string'/>
+     <xs:element minOccurs='0' name='Reproceso' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEACabResponse'>
+    <xs:complexContent>
+     <xs:extension base='tns:FECabResponse'>
+      <xs:sequence/>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfFECAEDetResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='FECAEDetResponse' nillable='true' type='tns:FECAEDetResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEDetResponse'>
+    <xs:complexContent>
+     <xs:extension base='tns:FEDetResponse'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='CAE' type='xs:string'/>
+       <xs:element minOccurs='0' name='CAEFchVto' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='FEDetResponse'>
+    <xs:sequence>
+     <xs:element name='Concepto' type='xs:int'/>
+     <xs:element name='DocTipo' type='xs:int'/>
+     <xs:element name='DocNro' type='xs:long'/>
+     <xs:element name='CbteDesde' type='xs:long'/>
+     <xs:element name='CbteHasta' type='xs:long'/>
+     <xs:element minOccurs='0' name='CbteFch' type='xs:string'/>
+     <xs:element minOccurs='0' name='Resultado' type='xs:string'/>
+     <xs:element minOccurs='0' name='Observaciones' type='tns:ArrayOfObs'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEADetResponse'>
+    <xs:complexContent>
+     <xs:extension base='tns:FEDetResponse'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='CAEA' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfEvt'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='Evt' nillable='true' type='tns:Evt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='Evt'>
+    <xs:sequence>
+     <xs:element name='Code' type='xs:int'/>
+     <xs:element minOccurs='0' name='Msg' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfErr'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='Err' nillable='true' type='tns:Err'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='Err'>
+    <xs:sequence>
+     <xs:element name='Code' type='xs:int'/>
+     <xs:element minOccurs='0' name='Msg' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECompConsultaReq'>
+    <xs:sequence>
+     <xs:element name='CbteTipo' type='xs:int'/>
+     <xs:element name='CbteNro' type='xs:long'/>
+     <xs:element name='PtoVta' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECompConsultaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:FECompConsResponse'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='DummyResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='AppServer' type='xs:string'/>
+     <xs:element minOccurs='0' name='DbServer' type='xs:string'/>
+     <xs:element minOccurs='0' name='AuthServer' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FERecuperaLastCbteResponse'>
+    <xs:sequence>
+     <xs:element name='PtoVta' type='xs:int'/>
+     <xs:element name='CbteTipo' type='xs:int'/>
+     <xs:element name='CbteNro' type='xs:int'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEAGetResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:FECAEAGet'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEAGet'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='CAEA' type='xs:string'/>
+     <xs:element name='Periodo' type='xs:int'/>
+     <xs:element name='Orden' type='xs:short'/>
+     <xs:element minOccurs='0' name='FchVigDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchVigHasta' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchTopeInf' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchProceso' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEARequest'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='FeCabReq' type='tns:FECAEACabRequest'/>
+     <xs:element minOccurs='0' name='FeDetReq' type='tns:ArrayOfFECAEADetRequest'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfFECAEADetRequest'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='FECAEADetRequest' nillable='true' type='tns:FECAEADetRequest'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEAResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='FeCabResp' type='tns:FECAEACabResponse'/>
+     <xs:element minOccurs='0' name='FeDetResp' type='tns:ArrayOfFECAEADetResponse'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfFECAEADetResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='FECAEADetResponse' nillable='true' type='tns:FECAEADetResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASinMovConsResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfFECAEASinMov'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfFECAEASinMov'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='FECAEASinMov' nillable='true' type='tns:FECAEASinMov'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASinMov'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='CAEA' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchProceso' type='xs:string'/>
+     <xs:element name='PtoVta' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASinMovResponse'>
+    <xs:complexContent>
+     <xs:extension base='tns:FECAEASinMov'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='Resultado' type='xs:string'/>
+       <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+       <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='FERegXReqResponse'>
+    <xs:sequence>
+     <xs:element name='RegXReq' type='xs:int'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECotizacionResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:Cotizacion'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='Cotizacion'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='MonId' type='xs:string'/>
+     <xs:element name='MonCotiz' type='xs:double'/>
+     <xs:element minOccurs='0' name='FchCotiz' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEPtoVentaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfPtoVenta'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfPtoVenta'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='PtoVenta' nillable='true' type='tns:PtoVenta'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='PtoVenta'>
+    <xs:sequence>
+     <xs:element name='Nro' type='xs:short'/>
+     <xs:element minOccurs='0' name='EmisionTipo' type='xs:string'/>
+     <xs:element minOccurs='0' name='Bloqueado' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchBaja' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='CbteTipoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfCbteTipo'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfCbteTipo'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='CbteTipo' nillable='true' type='tns:CbteTipo'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='CbteTipo'>
+    <xs:sequence>
+     <xs:element name='Id' type='xs:int'/>
+     <xs:element minOccurs='0' name='Desc' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchHasta' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ConceptoTipoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfConceptoTipo'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfConceptoTipo'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='ConceptoTipo' nillable='true' type='tns:ConceptoTipo'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ConceptoTipo'>
+    <xs:sequence>
+     <xs:element name='Id' type='xs:int'/>
+     <xs:element minOccurs='0' name='Desc' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchHasta' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='DocTipoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfDocTipo'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfDocTipo'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='DocTipo' nillable='true' type='tns:DocTipo'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='DocTipo'>
+    <xs:sequence>
+     <xs:element name='Id' type='xs:int'/>
+     <xs:element minOccurs='0' name='Desc' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchHasta' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='IvaTipoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfIvaTipo'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfIvaTipo'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='IvaTipo' nillable='true' type='tns:IvaTipo'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='IvaTipo'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='Id' type='xs:string'/>
+     <xs:element minOccurs='0' name='Desc' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchHasta' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='MonedaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfMoneda'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfMoneda'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='Moneda' nillable='true' type='tns:Moneda'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='Moneda'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='Id' type='xs:string'/>
+     <xs:element minOccurs='0' name='Desc' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchHasta' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='OpcionalTipoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfOpcionalTipo'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfOpcionalTipo'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='OpcionalTipo' nillable='true' type='tns:OpcionalTipo'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='OpcionalTipo'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='Id' type='xs:string'/>
+     <xs:element minOccurs='0' name='Desc' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchHasta' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FETributoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='ResultGet' type='tns:ArrayOfTributoTipo'/>
+     <xs:element minOccurs='0' name='Errors' type='tns:ArrayOfErr'/>
+     <xs:element minOccurs='0' name='Events' type='tns:ArrayOfEvt'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='ArrayOfTributoTipo'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='TributoTipo' nillable='true' type='tns:TributoTipo'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='TributoTipo'>
+    <xs:sequence>
+     <xs:element name='Id' type='xs:short'/>
+     <xs:element minOccurs='0' name='Desc' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchDesde' type='xs:string'/>
+     <xs:element minOccurs='0' name='FchHasta' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+  </xs:schema>
+  <xs:schema targetNamespace='http://servicios.conector.esphora.syntagma.com.ar/' version='1.0' xmlns:ns1='http://ar.gov.afip.dif.FEV1/' xmlns:tns='http://servicios.conector.esphora.syntagma.com.ar/' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+   <xs:import namespace='http://ar.gov.afip.dif.FEV1/'/>
+   <xs:element name='FECAEAConsultar' type='tns:FECAEAConsultar'/>
+   <xs:element name='FECAEAConsultarResponse' type='tns:FECAEAConsultarResponse'/>
+   <xs:element name='FECAEARegInformativo' type='tns:FECAEARegInformativo'/>
+   <xs:element name='FECAEARegInformativoResponse' type='tns:FECAEARegInformativoResponse'/>
+   <xs:element name='FECAEASinMovimientoConsultar' type='tns:FECAEASinMovimientoConsultar'/>
+   <xs:element name='FECAEASinMovimientoConsultarResponse' type='tns:FECAEASinMovimientoConsultarResponse'/>
+   <xs:element name='FECAEASinMovimientoInformar' type='tns:FECAEASinMovimientoInformar'/>
+   <xs:element name='FECAEASinMovimientoInformarResponse' type='tns:FECAEASinMovimientoInformarResponse'/>
+   <xs:element name='FECAEASolicitar' type='tns:FECAEASolicitar'/>
+   <xs:element name='FECAEASolicitarResponse' type='tns:FECAEASolicitarResponse'/>
+   <xs:element name='FECAESolicitar' type='tns:FECAESolicitar'/>
+   <xs:element name='FECAESolicitarResponse' type='tns:FECAESolicitarResponse'/>
+   <xs:element name='FECompConsultar' type='tns:FECompConsultar'/>
+   <xs:element name='FECompConsultarResponse' type='tns:FECompConsultarResponse'/>
+   <xs:element name='FECompTotXRequest' type='tns:FECompTotXRequest'/>
+   <xs:element name='FECompTotXRequestResponse' type='tns:FECompTotXRequestResponse'/>
+   <xs:element name='FECompUltimoAutorizado' type='tns:FECompUltimoAutorizado'/>
+   <xs:element name='FECompUltimoAutorizadoResponse' type='tns:FECompUltimoAutorizadoResponse'/>
+   <xs:element name='FEParamGetCotizacion' type='tns:FEParamGetCotizacion'/>
+   <xs:element name='FEParamGetCotizacionResponse' type='tns:FEParamGetCotizacionResponse'/>
+   <xs:element name='FEParamGetPtosVenta' type='tns:FEParamGetPtosVenta'/>
+   <xs:element name='FEParamGetPtosVentaResponse' type='tns:FEParamGetPtosVentaResponse'/>
+   <xs:element name='FEParamGetTiposCbte' type='tns:FEParamGetTiposCbte'/>
+   <xs:element name='FEParamGetTiposCbteResponse' type='tns:FEParamGetTiposCbteResponse'/>
+   <xs:element name='FEParamGetTiposConcepto' type='tns:FEParamGetTiposConcepto'/>
+   <xs:element name='FEParamGetTiposConceptoResponse' type='tns:FEParamGetTiposConceptoResponse'/>
+   <xs:element name='FEParamGetTiposDoc' type='tns:FEParamGetTiposDoc'/>
+   <xs:element name='FEParamGetTiposDocResponse' type='tns:FEParamGetTiposDocResponse'/>
+   <xs:element name='FEParamGetTiposIva' type='tns:FEParamGetTiposIva'/>
+   <xs:element name='FEParamGetTiposIvaResponse' type='tns:FEParamGetTiposIvaResponse'/>
+   <xs:element name='FEParamGetTiposMonedas' type='tns:FEParamGetTiposMonedas'/>
+   <xs:element name='FEParamGetTiposMonedasResponse' type='tns:FEParamGetTiposMonedasResponse'/>
+   <xs:element name='FEParamGetTiposOpcional' type='tns:FEParamGetTiposOpcional'/>
+   <xs:element name='FEParamGetTiposOpcionalResponse' type='tns:FEParamGetTiposOpcionalResponse'/>
+   <xs:element name='FEParamGetTiposTributo' type='tns:FEParamGetTiposTributo'/>
+   <xs:element name='FEParamGetTiposTributoResponse' type='tns:FEParamGetTiposTributoResponse'/>
+   <xs:element name='FEV1Dummy' type='tns:FEV1Dummy'/>
+   <xs:element name='FEV1DummyResponse' type='tns:FEV1DummyResponse'/>
+   <xs:complexType name='FECAESolicitar'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='fer' type='ns1:FECAERequest'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAESolicitarResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FECAEResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECompConsultar'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='FECompConsultaReq' type='ns1:FECompConsultaReq'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECompConsultarResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FECompConsultaResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEV1Dummy'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEV1DummyResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:DummyResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECompUltimoAutorizado'>
+    <xs:sequence>
+     <xs:element name='tipoComprobante' type='xs:int'/>
+     <xs:element name='puntoVenta' type='xs:int'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECompUltimoAutorizadoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FERecuperaLastCbteResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEAConsultar'>
+    <xs:sequence>
+     <xs:element name='periodo' type='xs:int'/>
+     <xs:element name='orden' type='xs:short'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEAConsultarResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FECAEAGetResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASolicitar'>
+    <xs:sequence>
+     <xs:element name='periodo' type='xs:int'/>
+     <xs:element name='orden' type='xs:short'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASolicitarResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FECAEAGetResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEARegInformativo'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='feCAEARegInfReq' type='ns1:FECAEARequest'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEARegInformativoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FECAEAResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASinMovimientoConsultar'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='caea' type='xs:string'/>
+     <xs:element name='ptoVta' type='xs:int'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASinMovimientoConsultarResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FECAEASinMovConsResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASinMovimientoInformar'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='caea' type='xs:string'/>
+     <xs:element name='ptoVta' type='xs:int'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECAEASinMovimientoInformarResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FECAEASinMovResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECompTotXRequest'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='caea' type='xs:string'/>
+     <xs:element name='ptoVta' type='xs:int'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FECompTotXRequestResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FERegXReqResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetCotizacion'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='monId' type='xs:string'/>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetCotizacionResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FECotizacionResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetPtosVenta'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetPtosVentaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FEPtoVentaResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposCbte'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposCbteResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:CbteTipoResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposConcepto'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposConceptoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:ConceptoTipoResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposDoc'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposDocResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:DocTipoResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposIva'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposIvaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:IvaTipoResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposMonedas'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposMonedasResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:MonedaResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposOpcional'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposOpcionalResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:OpcionalTipoResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposTributo'>
+    <xs:sequence>
+     <xs:element name='cuit' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='FEParamGetTiposTributoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='ns1:FETributoResponse'/>
+    </xs:sequence>
+   </xs:complexType>
+  </xs:schema>
+ </types>
+ <message name='wsfev1_FECompTotXRequest'>
+  <part element='tns:FECompTotXRequest' name='FECompTotXRequest'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposTributo'>
+  <part element='tns:FEParamGetTiposTributo' name='FEParamGetTiposTributo'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposTributoResponse'>
+  <part element='tns:FEParamGetTiposTributoResponse' name='FEParamGetTiposTributoResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposConceptoResponse'>
+  <part element='tns:FEParamGetTiposConceptoResponse' name='FEParamGetTiposConceptoResponse'></part>
+ </message>
+ <message name='wsfev1_FECAEASinMovimientoConsultar'>
+  <part element='tns:FECAEASinMovimientoConsultar' name='FECAEASinMovimientoConsultar'></part>
+ </message>
+ <message name='wsfev1_FECAEASolicitarResponse'>
+  <part element='tns:FECAEASolicitarResponse' name='FECAEASolicitarResponse'></part>
+ </message>
+ <message name='wsfev1_FECompConsultarResponse'>
+  <part element='tns:FECompConsultarResponse' name='FECompConsultarResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposCbte'>
+  <part element='tns:FEParamGetTiposCbte' name='FEParamGetTiposCbte'></part>
+ </message>
+ <message name='wsfev1_FECAEASinMovimientoInformarResponse'>
+  <part element='tns:FECAEASinMovimientoInformarResponse' name='FECAEASinMovimientoInformarResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposMonedas'>
+  <part element='tns:FEParamGetTiposMonedas' name='FEParamGetTiposMonedas'></part>
+ </message>
+ <message name='wsfev1_FECAEASolicitar'>
+  <part element='tns:FECAEASolicitar' name='FECAEASolicitar'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposIvaResponse'>
+  <part element='tns:FEParamGetTiposIvaResponse' name='FEParamGetTiposIvaResponse'></part>
+ </message>
+ <message name='wsfev1_FECAESolicitar'>
+  <part element='tns:FECAESolicitar' name='FECAESolicitar'></part>
+ </message>
+ <message name='wsfev1_FECAEAConsultar'>
+  <part element='tns:FECAEAConsultar' name='FECAEAConsultar'></part>
+ </message>
+ <message name='wsfev1_FECAESolicitarResponse'>
+  <part element='tns:FECAESolicitarResponse' name='FECAESolicitarResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetCotizacionResponse'>
+  <part element='tns:FEParamGetCotizacionResponse' name='FEParamGetCotizacionResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposConcepto'>
+  <part element='tns:FEParamGetTiposConcepto' name='FEParamGetTiposConcepto'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposMonedasResponse'>
+  <part element='tns:FEParamGetTiposMonedasResponse' name='FEParamGetTiposMonedasResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposOpcional'>
+  <part element='tns:FEParamGetTiposOpcional' name='FEParamGetTiposOpcional'></part>
+ </message>
+ <message name='wsfev1_FECAEARegInformativoResponse'>
+  <part element='tns:FECAEARegInformativoResponse' name='FECAEARegInformativoResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetPtosVentaResponse'>
+  <part element='tns:FEParamGetPtosVentaResponse' name='FEParamGetPtosVentaResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposOpcionalResponse'>
+  <part element='tns:FEParamGetTiposOpcionalResponse' name='FEParamGetTiposOpcionalResponse'></part>
+ </message>
+ <message name='wsfev1_FEV1DummyResponse'>
+  <part element='tns:FEV1DummyResponse' name='FEV1DummyResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposCbteResponse'>
+  <part element='tns:FEParamGetTiposCbteResponse' name='FEParamGetTiposCbteResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposIva'>
+  <part element='tns:FEParamGetTiposIva' name='FEParamGetTiposIva'></part>
+ </message>
+ <message name='wsfev1_FECAEASinMovimientoConsultarResponse'>
+  <part element='tns:FECAEASinMovimientoConsultarResponse' name='FECAEASinMovimientoConsultarResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposDocResponse'>
+  <part element='tns:FEParamGetTiposDocResponse' name='FEParamGetTiposDocResponse'></part>
+ </message>
+ <message name='wsfev1_FECompTotXRequestResponse'>
+  <part element='tns:FECompTotXRequestResponse' name='FECompTotXRequestResponse'></part>
+ </message>
+ <message name='wsfev1_FECompUltimoAutorizado'>
+  <part element='tns:FECompUltimoAutorizado' name='FECompUltimoAutorizado'></part>
+ </message>
+ <message name='wsfev1_FECAEAConsultarResponse'>
+  <part element='tns:FECAEAConsultarResponse' name='FECAEAConsultarResponse'></part>
+ </message>
+ <message name='wsfev1_FEParamGetTiposDoc'>
+  <part element='tns:FEParamGetTiposDoc' name='FEParamGetTiposDoc'></part>
+ </message>
+ <message name='wsfev1_FECompUltimoAutorizadoResponse'>
+  <part element='tns:FECompUltimoAutorizadoResponse' name='FECompUltimoAutorizadoResponse'></part>
+ </message>
+ <message name='wsfev1_FEV1Dummy'>
+  <part element='tns:FEV1Dummy' name='FEV1Dummy'></part>
+ </message>
+ <message name='wsfev1_FEParamGetCotizacion'>
+  <part element='tns:FEParamGetCotizacion' name='FEParamGetCotizacion'></part>
+ </message>
+ <message name='wsfev1_FECAEARegInformativo'>
+  <part element='tns:FECAEARegInformativo' name='FECAEARegInformativo'></part>
+ </message>
+ <message name='wsfev1_FEParamGetPtosVenta'>
+  <part element='tns:FEParamGetPtosVenta' name='FEParamGetPtosVenta'></part>
+ </message>
+ <message name='wsfev1_FECompConsultar'>
+  <part element='tns:FECompConsultar' name='FECompConsultar'></part>
+ </message>
+ <message name='wsfev1_FECAEASinMovimientoInformar'>
+  <part element='tns:FECAEASinMovimientoInformar' name='FECAEASinMovimientoInformar'></part>
+ </message>
+ <portType name='wsfev1'>
+  <operation name='FECAEAConsultar' parameterOrder='FECAEAConsultar'>
+   <input message='tns:wsfev1_FECAEAConsultar'></input>
+   <output message='tns:wsfev1_FECAEAConsultarResponse'></output>
+  </operation>
+  <operation name='FECAEARegInformativo' parameterOrder='FECAEARegInformativo'>
+   <input message='tns:wsfev1_FECAEARegInformativo'></input>
+   <output message='tns:wsfev1_FECAEARegInformativoResponse'></output>
+  </operation>
+  <operation name='FECAEASinMovimientoConsultar' parameterOrder='FECAEASinMovimientoConsultar'>
+   <input message='tns:wsfev1_FECAEASinMovimientoConsultar'></input>
+   <output message='tns:wsfev1_FECAEASinMovimientoConsultarResponse'></output>
+  </operation>
+  <operation name='FECAEASinMovimientoInformar' parameterOrder='FECAEASinMovimientoInformar'>
+   <input message='tns:wsfev1_FECAEASinMovimientoInformar'></input>
+   <output message='tns:wsfev1_FECAEASinMovimientoInformarResponse'></output>
+  </operation>
+  <operation name='FECAEASolicitar' parameterOrder='FECAEASolicitar'>
+   <input message='tns:wsfev1_FECAEASolicitar'></input>
+   <output message='tns:wsfev1_FECAEASolicitarResponse'></output>
+  </operation>
+  <operation name='FECAESolicitar' parameterOrder='FECAESolicitar'>
+   <input message='tns:wsfev1_FECAESolicitar'></input>
+   <output message='tns:wsfev1_FECAESolicitarResponse'></output>
+  </operation>
+  <operation name='FECompConsultar' parameterOrder='FECompConsultar'>
+   <input message='tns:wsfev1_FECompConsultar'></input>
+   <output message='tns:wsfev1_FECompConsultarResponse'></output>
+  </operation>
+  <operation name='FECompTotXRequest' parameterOrder='FECompTotXRequest'>
+   <input message='tns:wsfev1_FECompTotXRequest'></input>
+   <output message='tns:wsfev1_FECompTotXRequestResponse'></output>
+  </operation>
+  <operation name='FECompUltimoAutorizado' parameterOrder='FECompUltimoAutorizado'>
+   <input message='tns:wsfev1_FECompUltimoAutorizado'></input>
+   <output message='tns:wsfev1_FECompUltimoAutorizadoResponse'></output>
+  </operation>
+  <operation name='FEParamGetCotizacion' parameterOrder='FEParamGetCotizacion'>
+   <input message='tns:wsfev1_FEParamGetCotizacion'></input>
+   <output message='tns:wsfev1_FEParamGetCotizacionResponse'></output>
+  </operation>
+  <operation name='FEParamGetPtosVenta' parameterOrder='FEParamGetPtosVenta'>
+   <input message='tns:wsfev1_FEParamGetPtosVenta'></input>
+   <output message='tns:wsfev1_FEParamGetPtosVentaResponse'></output>
+  </operation>
+  <operation name='FEParamGetTiposCbte' parameterOrder='FEParamGetTiposCbte'>
+   <input message='tns:wsfev1_FEParamGetTiposCbte'></input>
+   <output message='tns:wsfev1_FEParamGetTiposCbteResponse'></output>
+  </operation>
+  <operation name='FEParamGetTiposConcepto' parameterOrder='FEParamGetTiposConcepto'>
+   <input message='tns:wsfev1_FEParamGetTiposConcepto'></input>
+   <output message='tns:wsfev1_FEParamGetTiposConceptoResponse'></output>
+  </operation>
+  <operation name='FEParamGetTiposDoc' parameterOrder='FEParamGetTiposDoc'>
+   <input message='tns:wsfev1_FEParamGetTiposDoc'></input>
+   <output message='tns:wsfev1_FEParamGetTiposDocResponse'></output>
+  </operation>
+  <operation name='FEParamGetTiposIva' parameterOrder='FEParamGetTiposIva'>
+   <input message='tns:wsfev1_FEParamGetTiposIva'></input>
+   <output message='tns:wsfev1_FEParamGetTiposIvaResponse'></output>
+  </operation>
+  <operation name='FEParamGetTiposMonedas' parameterOrder='FEParamGetTiposMonedas'>
+   <input message='tns:wsfev1_FEParamGetTiposMonedas'></input>
+   <output message='tns:wsfev1_FEParamGetTiposMonedasResponse'></output>
+  </operation>
+  <operation name='FEParamGetTiposOpcional' parameterOrder='FEParamGetTiposOpcional'>
+   <input message='tns:wsfev1_FEParamGetTiposOpcional'></input>
+   <output message='tns:wsfev1_FEParamGetTiposOpcionalResponse'></output>
+  </operation>
+  <operation name='FEParamGetTiposTributo' parameterOrder='FEParamGetTiposTributo'>
+   <input message='tns:wsfev1_FEParamGetTiposTributo'></input>
+   <output message='tns:wsfev1_FEParamGetTiposTributoResponse'></output>
+  </operation>
+  <operation name='FEV1Dummy' parameterOrder='FEV1Dummy'>
+   <input message='tns:wsfev1_FEV1Dummy'></input>
+   <output message='tns:wsfev1_FEV1DummyResponse'></output>
+  </operation>
+ </portType>
+ <binding name='wsfev1Binding' type='tns:wsfev1'>
+  <soap:binding style='document' transport='http://schemas.xmlsoap.org/soap/http'/>
+  <operation name='FECAEAConsultar'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FECAEARegInformativo'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FECAEASinMovimientoConsultar'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FECAEASinMovimientoInformar'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FECAEASolicitar'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FECAESolicitar'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FECompConsultar'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FECompTotXRequest'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FECompUltimoAutorizado'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetCotizacion'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetPtosVenta'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetTiposCbte'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetTiposConcepto'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetTiposDoc'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetTiposIva'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetTiposMonedas'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetTiposOpcional'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEParamGetTiposTributo'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='FEV1Dummy'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+ </binding>
+ <service name='Wsfev1Service'>
+  <port binding='tns:wsfev1Binding' name='wsfev1Port'>
+   <soap:address location='http://ec2-50-17-85-59.compute-1.amazonaws.com:8080/esphora-conector/ws/wsfev1?wsdl'/>
+  </port>
+ </service>
+</definitions>
