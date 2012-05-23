@@ -163,7 +163,7 @@ public class EsphoraConector implements FECAEConector  {
 		cuerpo.setIva(objIva);
 		cuerpo.setImpIVA(importe.getIva().doubleValue());
 		
-		cuerpo.setImpTotal(importe.getTotal().doubleValue());
+		cuerpo.setImpTotal(importe.getBruto().doubleValue());
 		
 		ArrayOfFECAEDetRequest aofdr = new ArrayOfFECAEDetRequest();
 		aofdr.getFECAEDetRequest().add(cuerpo);

@@ -35,23 +35,20 @@ public class EsphoraConectorTest {
 
 	private FECAEConector connector;
 	
+	private TipoComprobante comprobante;
+	
+	private TipoIva tipoIva;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		
 		connector = new EsphoraConector();
 		connector.init();
+		comprobante = TipoComprobante.FACTURA_B;
+		tipoIva = TipoIva.VEINTIUNO;
 	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
-	
 
 	/**
 	 * Test method for {@link ar.com.agtech.syros.esphora.conector.impl.EsphoraConector#generarFESimple(java.lang.Long, ar.com.agtech.syros.esphora.conector.elements.TipoComprobante, java.lang.Integer, ar.com.agtech.syros.esphora.conector.elements.TipoConcepto, ar.com.agtech.syros.esphora.conector.elements.TipoDocumento, long, long, ar.com.agtech.syros.esphora.conector.elements.Importe)}.
@@ -59,17 +56,23 @@ public class EsphoraConectorTest {
 	@Test
 	public void testGenerarFESimple() {
 		try {
-			FEUltimoResponse comp = connector.getFeCompUltimoAutorizado(TipoComprobante.FACTURA_A, 1, cuitFacturador);
+			FEUltimoResponse comp = connector.getFeCompUltimoAutorizado(comprobante, 1, cuitFacturador);
 			assertNotNull("La respuesta de el ultimo comprobante es nula", comp);
 			String[] errors =  comp.getErrores();
 			assertNull("Hubo errores en la llamada al servicio getFeCompUltimoAutorizado",errors);
-			log.info("El ultimo comprobante genrado fu� el n�mero: "+comp.getCbteNro());
-
-			FESimpleResponse response = connector.generarFESimple(cuitFacturador, 
-					TipoComprobante.FACTURA_A, 
-					1, TipoConcepto.PRODUCTOS, 
-					TipoDocumento.CUIT, 30710370792L, 
-					comp.getCbteNro()+1, new Importe(new BigDecimal("100"), TipoIva.VEINTIUNO,true));
+			log.info("El ultimo comprobante genrado fue el numero: "+comp.getCbteNro());
+			
+			Importe importe = new Importe(Importe.calcularBruto(new BigDecimal("100"), tipoIva), tipoIva,false);
+			
+			FESimpleResponse response = connector.generarFESimple(
+					cuitFacturador, 
+					comprobante, 
+					1,
+					TipoConcepto.PRODUCTOS, 
+					TipoDocumento.CUIT,
+					30710370792L, 
+					comp.getCbteNro()+1,
+					importe);
 			
 			assertNotNull("La respuesta de generarFESimple es nula", response);
 			String[] errores = response.getErrores();
@@ -85,6 +88,13 @@ public class EsphoraConectorTest {
 			fail(e.getMessage());
 		}
 
+	}
+	
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
 	}
 
 	

@@ -10,11 +10,14 @@ import java.math.RoundingMode;
 
 public class Importe {
 
-	private BigDecimal total ;
+	private BigDecimal bruto ;
 	private BigDecimal neto ;
 	private BigDecimal iva ;
 	private TipoIva tipoIva;
 	private Boolean discriminarIva;
+	
+	private static BigDecimal cent = new BigDecimal("100");
+	private static BigDecimal uni = new BigDecimal("1");
 	
 	/**
 	 * Construye un importe teniendo el neto y calculando el iva dependiendo del tipo de<br>
@@ -54,15 +57,15 @@ public class Importe {
 		if(discriminarIva){
 			this.neto = importe;
 		}else{
-			this.total = importe;
+			this.bruto = importe;
 		}
 		this.tipoIva = tipoIva;
 		this.discriminarIva = discriminarIva;
 		calcularImporte();
 	}
 	
-	public BigDecimal getTotal() {
-		return total;
+	public BigDecimal getBruto() {
+		return bruto;
 	}
 
 	public BigDecimal getNeto() {
@@ -77,29 +80,73 @@ public class Importe {
 		return tipoIva;
 	}
 
-	/* PRIVATE METHODS*/
-	private void calcularImporte(){
-		BigDecimal cent = new BigDecimal("100");
-		BigDecimal uni = new BigDecimal("1");
+	/**
+	 * Calcula el valor del iva al importe neto con respecto al tipo de iva
+	 * @param neto Valor al que se le calcular&aacute; el iva
+	 * @param tipoIva Tipo de iva que se calcular&aacute;
+	 * @return El Importe de iva del neto suministrado
+	 */
+	public static BigDecimal calcularIvaANeto(BigDecimal neto, TipoIva tipoIva){
+		BigDecimal porcIva = traducirIVA(tipoIva); //obtenemos el porcentaje de iva
+		BigDecimal intPorcIva = porcIva.divide(cent); //0.IVA
 		
-		BigDecimal porcIva = traducirIVA(); //obtenemos el porcentaje de iva
-		BigDecimal intPorcIva = porcIva.divide(cent);  //calculamos el operando del iva
-		BigDecimal multiplicand = intPorcIva.add(uni); //calculamos el multiplicando para el iva
-		
-		porcIva = porcIva.setScale(2, RoundingMode.HALF_UP);
-		if(discriminarIva){
-			iva = neto.multiply(intPorcIva);
-			total = neto.multiply(multiplicand);
-		}else{
-			neto = total.divide(multiplicand, 2, RoundingMode.HALF_UP);
-			iva = total.subtract(neto);
-		}
-		neto = neto.setScale(2, RoundingMode.HALF_UP);
-		total = total.setScale(2, RoundingMode.HALF_UP);
-		iva = iva.setScale(2, RoundingMode.HALF_UP);
+		return neto.multiply(intPorcIva).setScale(2,RoundingMode.HALF_UP);
 	}
 	
-	private BigDecimal traducirIVA(){
+	/**
+	 * Calcula el valor del iva del importe bruto con respecto al tipo de iva 
+	 * @param bruto Valor del que se calcular&aacute; el iva
+	 * @param tipoIva Tipo de iva que se calcular&aacute;
+	 * @return El Importe de iva del neto suministrado
+	 */
+	public static BigDecimal calcularIvaDeBruto(BigDecimal bruto, TipoIva tipoIva){
+		BigDecimal neto = calcularNeto(bruto,tipoIva);
+		return bruto.subtract(neto).setScale(2, RoundingMode.HALF_UP);
+	}
+	
+	/**
+	 * Calcula el importe neto teniendo en cuenta el tipo de iva y el importe bruto
+	 * @param bruto El importe bruto del que se calcualr&aacute; el iva y subsecuentemente el neto
+	 * @param tipoIva el tipo de iva que se tendr&aacute; en cuenta para calcular el neto
+	 * @return el importe neto
+	 */
+	public static BigDecimal calcularNeto(BigDecimal bruto, TipoIva tipoIva){
+		
+		BigDecimal porcIva = traducirIVA(tipoIva); //obtenemos el porcentaje de iva
+		BigDecimal intPorcIva = porcIva.divide(cent);  //calculamos el operando del iva
+		BigDecimal multiplicand = intPorcIva.add(uni); //calculamos el multiplicando para el iva
+
+		return bruto.divide(multiplicand, 2, RoundingMode.HALF_UP);
+	}
+	
+	/**
+	 * Calcula el importe bruto teniendo en cuenta el tipo de iva
+	 * @param neto el importe neto sobre el que se calcualr&aacute; el iva y subsecuentemente el bruto
+	 * @param tipoIva el tipo de iva que se tendr&aacute; en cuenta para calcular el bruto
+	 * @return el importe bruto
+	 */
+	public static BigDecimal calcularBruto(BigDecimal neto, TipoIva tipoIva){
+		
+		BigDecimal porcIva = traducirIVA(tipoIva); //obtenemos el porcentaje de iva
+		BigDecimal intPorcIva = porcIva.divide(cent);  //calculamos el operando del iva
+		BigDecimal multiplicand = intPorcIva.add(uni); //calculamos el multiplicando para el iva
+		porcIva = porcIva.setScale(2, RoundingMode.HALF_UP);//seteamos la escala
+		
+		return neto.multiply(multiplicand).setScale(2, RoundingMode.HALF_UP);
+	}
+	
+	/* PRIVATE METHODS*/
+	private void calcularImporte(){
+		if(discriminarIva){
+			iva = calcularIvaANeto(neto,tipoIva);
+			bruto = calcularBruto(neto, tipoIva);
+		}else{
+			neto = calcularNeto(bruto, tipoIva);
+			iva = calcularIvaDeBruto(bruto, tipoIva);
+		}
+	}
+	
+	private static BigDecimal traducirIVA(TipoIva tipoIva){
 		BigDecimal porcIva;
 		switch (tipoIva) {
 		case CERO:
@@ -117,12 +164,4 @@ public class Importe {
 		}
 		return porcIva;
 	}
-	
-//	public static BigDecimal calcularIvaDeBruto(){
-//		
-//	}
-//	
-//	public static BigDecimal calcularIvaANeto(){
-//		
-//	}
 }
