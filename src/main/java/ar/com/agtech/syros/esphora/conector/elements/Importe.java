@@ -10,9 +10,9 @@ import java.math.RoundingMode;
 
 public class Importe {
 
-	private BigDecimal total;
-	private BigDecimal neto;
-	private BigDecimal iva;
+	private BigDecimal total ;
+	private BigDecimal neto ;
+	private BigDecimal iva ;
 	private TipoIva tipoIva;
 	private Boolean discriminarIva;
 	
@@ -86,14 +86,17 @@ public class Importe {
 		BigDecimal intPorcIva = porcIva.divide(cent);  //calculamos el operando del iva
 		BigDecimal multiplicand = intPorcIva.add(uni); //calculamos el multiplicando para el iva
 		
-		porcIva.setScale(2, RoundingMode.HALF_UP);
+		porcIva = porcIva.setScale(2, RoundingMode.HALF_UP);
 		if(discriminarIva){
 			iva = neto.multiply(intPorcIva);
 			total = neto.multiply(multiplicand);
 		}else{
-			neto = total.divide(multiplicand);
+			neto = total.divide(multiplicand, 2, RoundingMode.HALF_UP);
 			iva = total.subtract(neto);
 		}
+		neto = neto.setScale(2, RoundingMode.HALF_UP);
+		total = total.setScale(2, RoundingMode.HALF_UP);
+		iva = iva.setScale(2, RoundingMode.HALF_UP);
 	}
 	
 	private BigDecimal traducirIVA(){
@@ -115,4 +118,11 @@ public class Importe {
 		return porcIva;
 	}
 	
+//	public static BigDecimal calcularIvaDeBruto(){
+//		
+//	}
+//	
+//	public static BigDecimal calcularIvaANeto(){
+//		
+//	}
 }
