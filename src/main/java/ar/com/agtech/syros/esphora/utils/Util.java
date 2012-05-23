@@ -64,6 +64,18 @@ public class Util {
 		case FACTURA_B:
 			cbte = Constantes.TIPO_COMPROBANTE_FACTURA_B;
 			break;
+		case NOTA_CREDITO_A:
+			cbte = Constantes.TIPO_COMPROBANTE_NOTA_CREDITO_A;
+			break;
+		case NOTA_CREDITO_B:
+			cbte = Constantes.TIPO_COMPROBANTE_NOTA_CREDITO_B;
+			break;
+		case NOTA_DEBITO_A:
+			cbte = Constantes.TIPO_COMPROBANTE_NOTA_DEBITO_A;
+			break;
+		case NOTA_DEBITO_B:
+			cbte = Constantes.TIPO_COMPROBANTE_NOTA_DEBITO_B;
+			break;
 		}
 		return cbte;
 	}

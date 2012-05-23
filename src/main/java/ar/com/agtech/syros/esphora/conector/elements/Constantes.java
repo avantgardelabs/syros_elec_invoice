@@ -11,7 +11,11 @@ public class Constantes {
 	public static final int TIPO_CONCEPTO_PRODUCTOS_SERVICIOS = 3;
 	
 	public static final int TIPO_COMPROBANTE_FACTURA_A = 1;
+	public static final int TIPO_COMPROBANTE_NOTA_DEBITO_A = 2;
+	public static final int TIPO_COMPROBANTE_NOTA_CREDITO_A = 3;
 	public static final int TIPO_COMPROBANTE_FACTURA_B = 6;
+	public static final int TIPO_COMPROBANTE_NOTA_DEBITO_B = 7;
+	public static final int TIPO_COMPROBANTE_NOTA_CREDITO_B = 8;
 	
 	public static final String TIPO_MONEDA_PESOS_ARGENTINOS = "PES";
 	public static final String TIPO_MONEDA_DOLARES_AMERICANOS = "DOL";
