@@ -3,6 +3,8 @@ package ar.com.agtech.syros.esphora.conector.elements;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Jorge Morando
  *
@@ -10,6 +12,8 @@ import java.math.RoundingMode;
 
 public class Importe {
 
+	private static final Logger log = Logger.getLogger(Importe.class);
+	
 	private BigDecimal bruto ;
 	private BigDecimal neto ;
 	private BigDecimal iva ;
@@ -56,8 +60,10 @@ public class Importe {
 	public Importe(BigDecimal importe, TipoIva tipoIva, boolean discriminarIva){
 		if(discriminarIva){
 			this.neto = importe;
+			this.neto = neto.setScale(2, RoundingMode.HALF_UP);
 		}else{
 			this.bruto = importe;
+			this.bruto = bruto.setScale(2, RoundingMode.HALF_UP);
 		}
 		this.tipoIva = tipoIva;
 		this.discriminarIva = discriminarIva;
@@ -138,12 +144,15 @@ public class Importe {
 	/* PRIVATE METHODS*/
 	private void calcularImporte(){
 		if(discriminarIva){
-			iva = calcularIvaANeto(neto,tipoIva);
+			iva = calcularIvaANeto(neto, tipoIva);
 			bruto = calcularBruto(neto, tipoIva);
 		}else{
 			neto = calcularNeto(bruto, tipoIva);
 			iva = calcularIvaDeBruto(bruto, tipoIva);
 		}
+		log.debug("Bruto: " + bruto);
+		log.debug("Neto: " + neto);
+		log.debug("IVA: " + iva);
 	}
 	
 	private static BigDecimal traducirIVA(TipoIva tipoIva){
