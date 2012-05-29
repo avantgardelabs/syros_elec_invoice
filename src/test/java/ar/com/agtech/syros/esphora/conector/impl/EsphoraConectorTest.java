@@ -35,10 +35,10 @@ public class EsphoraConectorTest {
 
 	private FECAEConector connector;
 	
-	private TipoComprobante comprobante;
-	
 	private TipoIva tipoIva;
 	
+	private String importeStr;
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -46,23 +46,25 @@ public class EsphoraConectorTest {
 	public void setUp() throws Exception {
 		connector = new EsphoraConector();
 		connector.init();
-		comprobante = TipoComprobante.FACTURA_B;
 		tipoIva = TipoIva.VEINTIUNO;
+		importeStr = "7117.704";
 	}
 
 	/**
 	 * Test method for {@link ar.com.agtech.syros.esphora.conector.impl.EsphoraConector#generarFESimple(java.lang.Long, ar.com.agtech.syros.esphora.conector.elements.TipoComprobante, java.lang.Integer, ar.com.agtech.syros.esphora.conector.elements.TipoConcepto, ar.com.agtech.syros.esphora.conector.elements.TipoDocumento, long, long, ar.com.agtech.syros.esphora.conector.elements.Importe)}.
 	 */
 	@Test
-	public void testGenerarFESimple() {
+	public void testGenerarFESimpleB() {
 		try {
+			log.debug("Generando Factura B iva NO discriminado");
+			TipoComprobante comprobante = TipoComprobante.FACTURA_B; 
 			FEUltimoResponse comp = connector.getFeCompUltimoAutorizado(comprobante, 1, cuitFacturador);
 			assertNotNull("La respuesta de el ultimo comprobante es nula", comp);
 			String[] errors =  comp.getErrores();
 			assertNull("Hubo errores en la llamada al servicio getFeCompUltimoAutorizado",errors);
 			log.info("El ultimo comprobante genrado fue el numero: "+comp.getCbteNro());
 			
-			Importe importe = new Importe(Importe.calcularBruto(new BigDecimal("100"), tipoIva), tipoIva,false);
+			Importe importe = new Importe(Importe.calcularBruto(new BigDecimal(importeStr), tipoIva), tipoIva, false);
 			
 			FESimpleResponse response = connector.generarFESimple(
 					cuitFacturador, 
@@ -80,6 +82,7 @@ public class EsphoraConectorTest {
 			
 			log.info("ESTADO: "+response.getEstado());
 			log.info("CAE: "+response.getCAE());
+			log.debug("-------------------------------------------------------------------");
 			
 			
 			
@@ -93,14 +96,15 @@ public class EsphoraConectorTest {
 	@Test
 	public void testGenerarFESimpleA() {
 		try {
-			comprobante = TipoComprobante.FACTURA_A;
+			log.debug("Generando Factura A iva discriminado");
+			TipoComprobante comprobante = TipoComprobante.FACTURA_A;
 			FEUltimoResponse comp = connector.getFeCompUltimoAutorizado(comprobante, 1, cuitFacturador);
 			assertNotNull("La respuesta de el ultimo comprobante es nula", comp);
 			String[] errors =  comp.getErrores();
 			assertNull("Hubo errores en la llamada al servicio getFeCompUltimoAutorizado",errors);
 			log.info("El ultimo comprobante genrado fue el numero: "+comp.getCbteNro());
 			
-			Importe importe = new Importe(new BigDecimal("100"), tipoIva,true);
+			Importe importe = new Importe(new BigDecimal(importeStr), tipoIva, true);
 			
 			FESimpleResponse response = connector.generarFESimple(
 					cuitFacturador, 
@@ -119,6 +123,7 @@ public class EsphoraConectorTest {
 			log.info("ESTADO: "+response.getEstado());
 			log.info("CAE: "+response.getCAE());
 			
+			log.debug("-------------------------------------------------------------------");
 			
 			
 		} catch (Exception e) {
