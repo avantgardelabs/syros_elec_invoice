@@ -90,6 +90,44 @@ public class EsphoraConectorTest {
 
 	}
 	
+	@Test
+	public void testGenerarFESimpleA() {
+		try {
+			comprobante = TipoComprobante.FACTURA_A;
+			FEUltimoResponse comp = connector.getFeCompUltimoAutorizado(comprobante, 1, cuitFacturador);
+			assertNotNull("La respuesta de el ultimo comprobante es nula", comp);
+			String[] errors =  comp.getErrores();
+			assertNull("Hubo errores en la llamada al servicio getFeCompUltimoAutorizado",errors);
+			log.info("El ultimo comprobante genrado fue el numero: "+comp.getCbteNro());
+			
+			Importe importe = new Importe(new BigDecimal("100"), tipoIva,true);
+			
+			FESimpleResponse response = connector.generarFESimple(
+					cuitFacturador, 
+					comprobante, 
+					1,
+					TipoConcepto.PRODUCTOS, 
+					TipoDocumento.CUIT,
+					30710370792L, 
+					comp.getCbteNro()+1,
+					importe);
+			
+			assertNotNull("La respuesta de generarFESimple es nula", response);
+			String[] errores = response.getErrores();
+			assertNull("Hubo errores en la llamada al servicio getFeCompUltimoAutorizado",errores);
+			
+			log.info("ESTADO: "+response.getEstado());
+			log.info("CAE: "+response.getCAE());
+			
+			
+			
+		} catch (Exception e) {
+			log.error(e);
+			fail(e.getMessage());
+		}
+
+	}
+	
 	/**
 	 * @throws java.lang.Exception
 	 */

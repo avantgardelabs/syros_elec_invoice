@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import ar.com.agtech.syros.esphora.conector.artifacts.Err;
 import ar.com.agtech.syros.esphora.conector.artifacts.FECAECabResponse;
 import ar.com.agtech.syros.esphora.conector.artifacts.FECAEDetResponse;
@@ -20,6 +22,8 @@ import ar.com.agtech.syros.esphora.utils.Util;
  */
 public class FESimpleResponse {
 
+	private static Logger log = Logger.getLogger(FESimpleResponse.class);
+	
 	public static final int ESTADO_ERROR = 666;
 	public static final int ESTADO_RECHAZADA = 0;
 	public static final int ESTADO_APROBADA = 1;
@@ -33,6 +37,7 @@ public class FESimpleResponse {
 	private String[] errores;
 	
 	public FESimpleResponse(FECAEResponse rawResp){
+		log.debug("Se construye objeto de respuesta");
 		List<Err> errors = new ArrayList<Err>();
 		if( rawResp.getErrors() != null ){
 			 errors =  rawResp.getErrors().getErr();
@@ -40,12 +45,12 @@ public class FESimpleResponse {
 		
 		FECAECabResponse cabecera = rawResp.getFeCabResp();
 		
-		if(cabecera.getResultado().equals(RESULTADO_RECHAZADA)){
+		if(cabecera !=null && cabecera.getResultado().equals(RESULTADO_RECHAZADA)){
 			if(errors.size()>0){
 				errores = new String[errors.size()];
 				for (int i = 0; i < errors.size(); i++) {
 					try {
-						errores[i] = new String(errors.get(i).getMsg().getBytes(),"iso-8859-1");
+						errores[i] = new String(errors.get(i).getMsg().getBytes(),"UTF-8");
 					} catch (Exception e) {
 						//fallback to same encoding
 						errores[i] = errors.get(i).getMsg();
@@ -79,8 +84,17 @@ public class FESimpleResponse {
 				this.cae = cuerpo.getCAE();
 				this.vtoCae = Util.parseDate(cuerpo.getCAEFchVto());
 				estado = ESTADO_APROBADA;
-			}else
+			}else{
 				estado = ESTADO_ERROR;
+				for (int i = 0; i < errors.size(); i++) {
+					try {
+						errores[i] = new String(errors.get(i).getMsg().getBytes(),"UTF-8");
+					} catch (Exception e) {
+						//fallback to same encoding
+						errores[i] = errors.get(i).getMsg();
+					}
+				}
+			}
 		}
 		
 		
