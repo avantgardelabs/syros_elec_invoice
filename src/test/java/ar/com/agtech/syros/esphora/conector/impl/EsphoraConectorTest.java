@@ -47,7 +47,7 @@ public class EsphoraConectorTest {
 		connector = new EsphoraConector();
 		connector.init();
 		tipoIva = TipoIva.VEINTIUNO;
-		importeStr = "7117.704";
+		importeStr = "7117.7043";
 	}
 
 	/**
