@@ -1141,7 +1141,7 @@
  </binding>
  <service name='Wsfev1Service'>
   <port binding='tns:wsfev1Binding' name='wsfev1Port'>
-   <soap:address location='http://ec2-50-17-85-59.compute-1.amazonaws.com:8080/esphora-conector/ws/wsfev1?wsdl'/>
+   <soap:address location='http://syntagma.dyndns.org:8080/esphora-conector/ws/wsfev1'/>
   </port>
  </service>
 </definitions>
