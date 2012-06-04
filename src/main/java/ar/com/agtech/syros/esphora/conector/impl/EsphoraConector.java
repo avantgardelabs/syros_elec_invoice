@@ -27,6 +27,7 @@ import ar.com.agtech.syros.esphora.conector.elements.TipoDocumento;
 import ar.com.agtech.syros.esphora.conector.elements.TipoMoneda;
 import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraConnectionException;
 import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraException;
+import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraRemoteException;
 import ar.com.agtech.syros.esphora.conector.services.Wsfev1;
 import ar.com.agtech.syros.esphora.conector.services.Wsfev1Service;
 import ar.com.agtech.syros.esphora.utils.Util;
@@ -81,7 +82,7 @@ public class EsphoraConector implements FECAEConector  {
 			TipoDocumento doc,
 			long nroDoc, long nroCbte,
 			Importe importe
-			) throws EsphoraException{
+			) throws EsphoraRemoteException, EsphoraException{
 		/*generamos el cuerpo del request*/
 		log.debug("Header Generation...");
 		FECAECabRequest cabecera = generarCabecera(cbte,ptoVta);

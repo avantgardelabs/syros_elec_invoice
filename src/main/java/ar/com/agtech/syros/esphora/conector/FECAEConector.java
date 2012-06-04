@@ -10,6 +10,7 @@ import ar.com.agtech.syros.esphora.conector.elements.TipoConcepto;
 import ar.com.agtech.syros.esphora.conector.elements.TipoDocumento;
 import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraConnectionException;
 import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraException;
+import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraRemoteException;
 
 public interface FECAEConector extends Serializable {
 
@@ -34,7 +35,7 @@ public interface FECAEConector extends Serializable {
 			TipoConcepto cpto, 
 			TipoDocumento tipoDoc, long nroDoc,
 			long nroCbte,
-			Importe importe) throws EsphoraException;
+			Importe importe) throws EsphoraRemoteException, EsphoraException;
 	
 	/*GET PARAMS*/
 	

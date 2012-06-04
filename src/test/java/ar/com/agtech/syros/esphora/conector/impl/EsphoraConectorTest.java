@@ -29,7 +29,8 @@ import ar.com.agtech.syros.esphora.conector.elements.TipoIva;
  */
 public class EsphoraConectorTest {
 	
-	private static final long cuitFacturador = 33679836299L;
+	private static final long cuitFacturador = 30710370792L;
+	private static final long cuitCliente = 30710370792L;
 	
 	private static final Logger log = Logger.getLogger(EsphoraConectorTest.class);
 
@@ -72,7 +73,7 @@ public class EsphoraConectorTest {
 					1,
 					TipoConcepto.PRODUCTOS, 
 					TipoDocumento.CUIT,
-					30710370792L, 
+					cuitCliente, 
 					comp.getCbteNro()+1,
 					importe);
 			
@@ -112,7 +113,7 @@ public class EsphoraConectorTest {
 					1,
 					TipoConcepto.PRODUCTOS, 
 					TipoDocumento.CUIT,
-					30710370792L, 
+					cuitCliente, 
 					comp.getCbteNro()+1,
 					importe);
 			

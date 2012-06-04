@@ -9,11 +9,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import ar.com.agtech.syros.esphora.conector.artifacts.ArrayOfFECAEDetResponse;
 import ar.com.agtech.syros.esphora.conector.artifacts.Err;
 import ar.com.agtech.syros.esphora.conector.artifacts.FECAECabResponse;
 import ar.com.agtech.syros.esphora.conector.artifacts.FECAEDetResponse;
 import ar.com.agtech.syros.esphora.conector.artifacts.FECAEResponse;
 import ar.com.agtech.syros.esphora.conector.artifacts.Obs;
+import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraRemoteException;
 import ar.com.agtech.syros.esphora.utils.Util;
 
 /**
@@ -36,7 +38,7 @@ public class FESimpleResponse {
 	private Date vtoCae;
 	private String[] errores;
 	
-	public FESimpleResponse(FECAEResponse rawResp){
+	public FESimpleResponse(FECAEResponse rawResp) throws EsphoraRemoteException {
 		log.debug("Se construye objeto de respuesta");
 		List<Err> errors = new ArrayList<Err>();
 		if( rawResp.getErrors() != null ){
@@ -44,59 +46,65 @@ public class FESimpleResponse {
 		}
 		
 		FECAECabResponse cabecera = rawResp.getFeCabResp();
+		ArrayOfFECAEDetResponse cuerpo = rawResp.getFeDetResp();
 		
-		if(cabecera !=null && cabecera.getResultado().equals(RESULTADO_RECHAZADA)){
-			if(errors.size()>0){
-				errores = new String[errors.size()];
-				for (int i = 0; i < errors.size(); i++) {
-					try {
-						errores[i] = new String(errors.get(i).getMsg().getBytes(),"UTF-8");
-					} catch (Exception e) {
-						//fallback to same encoding
-						errores[i] = errors.get(i).getMsg();
-					}
-				}
-				estado = ESTADO_RECHAZADA;
-			}else{
-				if(rawResp.getFeDetResp()!=null){
-					FECAEDetResponse cuerpo = rawResp.getFeDetResp().getFECAEDetResponse().get(0);
-					if(cuerpo.getObservaciones()!=null){
-						List<Obs> observaciones = cuerpo.getObservaciones().getObs();
-						errores = new String[observaciones.size()];
-						for (int i = 0; i < observaciones.size(); i++) {
-							try {
-								errores[i] = new String(observaciones.get(i).getMsg().getBytes(),"iso-8859-1");
-							} catch (Exception e) {
-								//fallback to same encoding
-								errores[i] = observaciones.get(i).getMsg();
-							}
-						}
-						estado = ESTADO_RECHAZADA;
-					}else
-						estado = ESTADO_ERROR;
+		if(cabecera !=null){//hay cabecera
+			if(RESULTADO_APROBADA.equals(cabecera.getResultado())){//vino aprobada
+				if(cuerpo!=null){
+					FECAEDetResponse primerRespuesta = cuerpo.getFECAEDetResponse().get(0);
+					this.cae = primerRespuesta.getCAE();
+					this.vtoCae = Util.parseDate(primerRespuesta.getCAEFchVto());
+					estado = ESTADO_APROBADA;
 				}else{
 					estado = ESTADO_ERROR;
+					for (int i = 0; i < errors.size(); i++) {
+						try {
+							errores[i] = new String(errors.get(i).getMsg().getBytes(),"iso-8859-1");
+						} catch (Exception e) {
+							//fallback to same encoding
+							errores[i] = errors.get(i).getMsg();
+						}
+					}
 				}
-			}
-		}else{
-			if(rawResp.getFeDetResp()!=null){
-				FECAEDetResponse cuerpo = rawResp.getFeDetResp().getFECAEDetResponse().get(0);
-				this.cae = cuerpo.getCAE();
-				this.vtoCae = Util.parseDate(cuerpo.getCAEFchVto());
-				estado = ESTADO_APROBADA;
-			}else{
-				estado = ESTADO_ERROR;
-				for (int i = 0; i < errors.size(); i++) {
-					try {
-						errores[i] = new String(errors.get(i).getMsg().getBytes(),"UTF-8");
-					} catch (Exception e) {
-						//fallback to same encoding
-						errores[i] = errors.get(i).getMsg();
+			}else{// vino rechazada
+				if(errors.size()>0){
+					errores = new String[errors.size()];
+					for (int i = 0; i < errors.size(); i++) {
+						try {
+							errores[i] = new String(errors.get(i).getMsg().getBytes(),"iso-8859-1");
+						} catch (Exception e) {
+							//fallback to same encoding
+							errores[i] = errors.get(i).getMsg();
+						}
+					}
+					estado = ESTADO_RECHAZADA;
+				}else{
+					if(cuerpo !=null){
+						FECAEDetResponse primerRespuesta = cuerpo.getFECAEDetResponse().get(0);
+						if(primerRespuesta!=null && primerRespuesta.getObservaciones()!=null){
+							List<Obs> observaciones = primerRespuesta.getObservaciones().getObs();
+							errores = new String[observaciones.size()];
+							for (int i = 0; i < observaciones.size(); i++) {
+								try {
+									errores[i] = new String(observaciones.get(i).getMsg().getBytes(),"iso-8859-1");
+								} catch (Exception e) {
+									//fallback to same encoding
+									errores[i] = observaciones.get(i).getMsg();
+								}
+							}
+							estado = ESTADO_RECHAZADA;
+						}else
+							estado = ESTADO_ERROR;
+					}else{
+						estado = ESTADO_ERROR;
+						throw new EsphoraRemoteException("No se incluye cuerpo en respuesta de Esphora");
 					}
 				}
 			}
+		}else{//no vino con cabecera
+			estado = ESTADO_ERROR;
+			throw new EsphoraRemoteException("No se incluye cabecera en respuesta de Esphora");
 		}
-		
 		
 	}
 	
