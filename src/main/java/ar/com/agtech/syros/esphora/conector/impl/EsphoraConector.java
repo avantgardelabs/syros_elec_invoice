@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.log4j.Logger;
 
@@ -96,7 +97,13 @@ public class EsphoraConector implements FECAEConector  {
 		req.setFeDetReq(cuerpo);
 		
 		log.debug("Requesting...");
-		FECAEResponse resp = serviceProxy.fecaeSolicitar(req, cuitFacturador);
+		FECAEResponse resp = null;
+		try {
+			resp = serviceProxy.fecaeSolicitar(req, cuitFacturador);
+		} catch (SOAPFaultException e) {
+			log.error("Remote Error Catched...",e);
+			throw new EsphoraRemoteException(e.getMessage());
+		}
 		
 		return new FESimpleResponse(resp);
 	}
