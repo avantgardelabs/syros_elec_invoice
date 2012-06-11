@@ -15,6 +15,7 @@ import ar.com.agtech.syros.esphora.conector.artifacts.FECAECabResponse;
 import ar.com.agtech.syros.esphora.conector.artifacts.FECAEDetResponse;
 import ar.com.agtech.syros.esphora.conector.artifacts.FECAEResponse;
 import ar.com.agtech.syros.esphora.conector.artifacts.Obs;
+import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraException;
 import ar.com.agtech.syros.esphora.conector.exceptions.EsphoraRemoteException;
 import ar.com.agtech.syros.esphora.utils.Util;
 
@@ -38,7 +39,7 @@ public class FESimpleResponse {
 	private Date vtoCae;
 	private String[] errores;
 	
-	public FESimpleResponse(FECAEResponse rawResp) throws EsphoraRemoteException {
+	public FESimpleResponse(FECAEResponse rawResp) throws EsphoraException {
 		log.debug("Se construye objeto de respuesta");
 		List<Err> errors = new ArrayList<Err>();
 		if( rawResp.getErrors() != null ){
@@ -97,15 +98,16 @@ public class FESimpleResponse {
 							estado = ESTADO_ERROR;
 					}else{
 						estado = ESTADO_ERROR;
-						throw new EsphoraRemoteException("No se incluye cuerpo en respuesta de Esphora");
+						throw new EsphoraException("No se incluye cuerpo en respuesta de Esphora",
+								new EsphoraRemoteException(errorsStringList(errors)));
 					}
 				}
 			}
 		}else{//no vino con cabecera
 			estado = ESTADO_ERROR;
-			throw new EsphoraRemoteException("No se incluye cabecera en respuesta de Esphora");
+			throw new EsphoraException("No se incluye cabecera en respuesta de Esphora", 
+					new EsphoraRemoteException(errorsStringList(errors)));
 		}
-		
 	}
 	
 	public int getEstado(){
@@ -122,5 +124,19 @@ public class FESimpleResponse {
 	
 	public String[] getErrores(){
 		return errores;
+	}
+	
+	private String errorsStringList(List<Err> errors){
+		StringBuilder errorListStr = new StringBuilder("");
+		if( errors != null && errors.isEmpty()){
+			for (int i = 0; i < errors.size(); i++) {
+				Err err = errors.get(i);
+				if(err!=null){
+					errorListStr.append("Code:"+err.getCode()+" Msg:"+err.getMsg());
+				}
+				if(errors.size()!=i)errorListStr.append(new Character('\n'));
+			}
+		}
+		return errorListStr.toString().trim();
 	}
 }

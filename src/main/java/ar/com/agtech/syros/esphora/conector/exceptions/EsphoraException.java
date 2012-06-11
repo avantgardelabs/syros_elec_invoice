@@ -15,4 +15,8 @@ public class EsphoraException extends Exception {
 		super(message);
 	}
 	
+	public EsphoraException(String message,Throwable cause){
+		super(message,cause);
+	}
+	
 }
