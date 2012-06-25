@@ -9,15 +9,15 @@ import ar.com.agtech.syros.fecae.exceptions.FECAEException;
  * @author Jorge Morando
  *
  */
-public class EsphoraException extends FECAEException {
+public class InvalidFeeException extends FECAEException {
 
-	private static final long serialVersionUID = 9097198287865132201L;
+	private static final long serialVersionUID = 610993068828726970L;
 
-	public EsphoraException(String message){
+	public InvalidFeeException(String message){
 		super(message);
 	}
 	
-	public EsphoraException(String message,Throwable cause){
+	public InvalidFeeException(String message,Throwable cause){
 		super(message,cause);
 	}
 	

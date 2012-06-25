@@ -1,5 +1,6 @@
 package ar.com.agtech.syros.fecae.implementations.esphora.elements;
 
+import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.Err;
 import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.Obs;
 
 public class EsphoraObservacion {
@@ -14,6 +15,12 @@ public class EsphoraObservacion {
 		this.originalObs = obs;
 		this.message = obs.getMsg();
 		this.code=obs.getCode();
+	}
+	
+	public EsphoraObservacion(Err err){
+		this.originalObs = null;
+		this.message = err.getMsg();
+		this.code=err.getCode();
 	}
 
 	/**

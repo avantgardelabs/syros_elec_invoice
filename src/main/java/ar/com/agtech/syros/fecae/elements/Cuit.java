@@ -3,15 +3,13 @@
  */
 package ar.com.agtech.syros.fecae.elements;
 
-import ar.com.agtech.syros.fecae.elements.types.TipoPersoneria;
-import ar.com.agtech.syros.fecae.exceptions.InvalidCUITException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidIDException;
 
 /**
  * @author Jorge Morando
  * 
  */
-public final class Cuit {
-	
+public final class Cuit implements Identification {
 
 	private Long dni;
 
@@ -21,13 +19,14 @@ public final class Cuit {
 	
 	private Long cuit;
 	
-	public Cuit(Long cuit)throws InvalidCUITException{
-		validar(cuit);
+	public Cuit(Long cuit) throws InvalidIDException{
+		this.cuit = cuit;
+		validar();
 	}
 	
-	private void validar(Long cuit) throws InvalidCUITException {
+	public void validar() throws InvalidIDException {
 		try {
-			if(cuit.toString().length()!=11) throw new IndexOutOfBoundsException("CUIT must 11 digits");
+			if(cuit.toString().length()!=11) throw new IndexOutOfBoundsException("Invalid CUIT length:"+cuit.toString().length()+"must 11 digits");
 			sexo = cuit / (long) Math.pow(10, 9);
 			dni = cuit / 10 - sexo * (long) Math.pow(10, 8);
 			verificador = cuit % 10;
@@ -41,20 +40,14 @@ public final class Cuit {
 			Long digito = 11 - suma % 11;
 			digito = digito.equals(11) ? 0 : digito;
 			digito = digito.equals(10) ? 9 : digito;
-			this.cuit = cuit;
 			
-			if(!verificador.equals(digito)) throw new InvalidCUITException("Invalid CUIT -> Check digit invalid.");
+			if(!verificador.equals(digito)) throw new InvalidIDException("Invalid CUIT Check digit");
 			
 		} catch (Exception e) {
-			throw new InvalidCUITException("Invalid CUIT",e);
+			throw new InvalidIDException("Invalid CUIT",e);
 		}
 	}
 	
-	@Override
-	public String toString() {
-		return cuit.toString();
-	}
-
 	public Long getDni() {
 		return dni;
 	}
@@ -78,17 +71,21 @@ public final class Cuit {
 	public void setVerificador(Long verificador) {
 		this.verificador = verificador;
 	}
+	
+	@Override
+	public String toString() {
+		return cuit.toString();
+	}
+	
+	@Override
+	public void setId(Long cuit) throws InvalidIDException {
+		this.cuit = cuit;
+		validar();
+	}
+	
+	@Override
+	public Long getId() {
+		return this.cuit;
+	}
 
-	public static void main(String[] args) {
-		Cuit cuit;
-		try {
-			cuit = new Cuit(20301524332L);
-			System.out.println(cuit);
-			System.out.println(cuit.getDni());
-			System.out.println((TipoPersoneria.FISICA_FEMENINO.getTipo() == cuit.getSexo()?"FEMENINO":"MASCULINO"));
-			System.out.println(cuit.getVerificador());
-		} catch (InvalidCUITException e) {
-			e.printStackTrace();
-		}
-	} 
 }

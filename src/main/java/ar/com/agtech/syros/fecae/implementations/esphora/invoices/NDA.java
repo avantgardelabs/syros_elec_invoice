@@ -15,19 +15,19 @@ import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoDocumento;
  * @author Jorge Morando
  * 
  */
-public class FB extends ComprobanteFiscal {
+public class NDA extends ComprobanteFiscal {
 	
 	/**
 	 * <b>NO APTA PARA FACTURACI&Oacute;N ELECTR&Oacute;NICA MASIVA</b><br>
-	 * Crea un Objeto de tipo Factura B<br>
+	 * Crea un Objeto de tipo Nota de D&eacute;bito A<br>
 	 */
-	public FB(){
+	public NDA(){
 		super();
 	}
 
 	/**
 	 * <b>NO APTA PARA FACTURACI&Oacute;N ELECTR&Oacute;NICA MASIVA</b><br>
-	 * Crea un Objeto de tipo Factura B listo para autorizar electr&oacute;nicamente<br>
+	 * Crea un Objeto de tipo Nota de D&eacute;bito A listo para autorizar electr&oacute;nicamente<br>
 	 * @param cuitFacturador
 	 * @param tipoDocCliente
 	 * @param nroDocCliente
@@ -37,14 +37,14 @@ public class FB extends ComprobanteFiscal {
 	 * @param importe
 	 * @throws EsphoraInternalException
 	 */
-	public FB(Cuit cuitFacturador, 
+	public NDA(Cuit cuitFacturador, 
 			TipoDocumento tipoDocCliente,
 			Identification docCliente, 
 			TipoConcepto tipoConcepto, 
 			Integer puntoDeVenta, 
 			Importe importe) throws EsphoraInternalException{
 		super();
-		this.setTipo(TipoComprobante.FACTURA_B);
+		this.setTipo(TipoComprobante.NOTA_DEBITO_A);
 		this.setCuitFacturador(cuitFacturador);
 		this.setTipoDocumentoDeCliente(tipoDocCliente);
 		this.setDocumentoDeCliente(docCliente);
@@ -54,7 +54,7 @@ public class FB extends ComprobanteFiscal {
 	}
 	
 	/**
-	 * Crea un Objeto de tipo Factura B listo para adjuntar a una lote de facturas del mismo tipo <br>
+	 * Crea un Objeto de tipo Nota de D&eacute;bito A listo para adjuntar a una lote de facturas del mismo tipo <br>
 	 * para facturar electr&oacute;nicamente.
 	 * @param cuitFacturador
 	 * @param tipoDocCliente
@@ -65,13 +65,13 @@ public class FB extends ComprobanteFiscal {
 	 * @param importe
 	 * @throws EsphoraInternalException
 	 */
-	public FB(TipoDocumento tipoDocCliente,
+	public NDA(TipoDocumento tipoDocCliente,
 			Identification docCliente,
 			TipoConcepto tipoConcepto, 
 			Importe importe) throws EsphoraInternalException{
 		super();
 		this.setMasiva(true);
-		this.setTipo(TipoComprobante.FACTURA_B);
+		this.setTipo(TipoComprobante.NOTA_DEBITO_A);
 		this.setTipoDocumentoDeCliente(tipoDocCliente);
 		this.setDocumentoDeCliente(docCliente);
 		this.setConcepto(tipoConcepto);

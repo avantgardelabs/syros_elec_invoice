@@ -9,7 +9,8 @@ package ar.com.agtech.syros.fecae.implementations.esphora.exceptions;
  */
 public class EsphoraInternalException extends EsphoraException {
 
-	private static final long serialVersionUID = 9097198287865132201L;
+
+	private static final long serialVersionUID = 7917517589611593228L;
 
 	public EsphoraInternalException(String message){
 		super(message);

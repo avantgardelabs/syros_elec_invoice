@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ar.com.agtech.syros</groupId>
 	<artifactId>ws-esphora</artifactId>
-	<version>0.2.1</version>
+	<version>0.2.2</version>
 	<name>ws-esphora</name>
 	<properties>
 		<!-- Explicitly declaring the source encoding eliminates the following 

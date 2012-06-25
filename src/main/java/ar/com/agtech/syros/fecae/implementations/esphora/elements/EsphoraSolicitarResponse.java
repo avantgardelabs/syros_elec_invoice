@@ -14,14 +14,17 @@ import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.FECAEResponse
 import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.Obs;
 import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraInternalException;
 import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraRemoteException;
+import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraUnhandledException;
 import ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal;
 import ar.com.agtech.syros.fecae.implementations.esphora.utils.Util;
 
 /**
  * @author Jorge Morando
+ * @param <C>
+ * @param <C>
  *
  */
-public class EsphoraSolicitarResponse implements EsphoraResponse {
+public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements EsphoraResponse{
 
 	private static Logger log = Logger.getLogger(EsphoraSolicitarResponse.class);
 	
@@ -33,8 +36,8 @@ public class EsphoraSolicitarResponse implements EsphoraResponse {
 	public static final String RESULTADO_APROBADA = "A";
 	public static final String RESULTADO_PARCIAL = "P";
 	
-	private List<ComprobanteFiscal> comprobantesAceptados;
-	private List<ComprobanteFiscal> comprobantesRechazados;
+	private List<C> comprobantesAceptados;
+	private List<C> comprobantesRechazados;
 	
 	private List<EsphoraError> globalErrors;
 	
@@ -42,61 +45,67 @@ public class EsphoraSolicitarResponse implements EsphoraResponse {
 	private String resultado;
 	
 	
-	public <C extends ComprobanteFiscal> EsphoraSolicitarResponse(FECAEResponse rawResp, List<C> lote) throws EsphoraInternalException {
+	public EsphoraSolicitarResponse(FECAEResponse rawResp, List<C> lote) throws EsphoraInternalException{
 		log.debug("Se construye objeto de respuesta");
-		translateErrors(rawResp.getErrors().getErr());
+		if(rawResp.getErrors()!=null){
+			translateErrors(rawResp.getErrors().getErr());
+		}
 		
 		FECAECabResponse cabecera = rawResp.getFeCabResp();
 		ArrayOfFECAEDetResponse cuerpo = rawResp.getFeDetResp();
-		
-		if(cabecera != null && cuerpo != null){
-			if(RESULTADO_APROBADA.equals(cabecera.getResultado())){//vineron todos aprobados
-				comprobantesAceptados = new ArrayList<ComprobanteFiscal>();
-				int index = 0;
-				FECAEDetResponse cfResp;
-				for (C cf : lote) {
-					cfResp = cuerpo.getFECAEDetResponse().get(index);
-					comprobantesAceptados.add(processCFAccepted(cfResp, cf));
-					index++;
-				}
-				estado = ESTADO_OK;
-				resultado = RESULTADO_APROBADA;
-			}else if(RESULTADO_RECHAZADA.equals(cabecera.getResultado())){
-				comprobantesRechazados = new ArrayList<ComprobanteFiscal>();
-				int index = 0;
-				FECAEDetResponse cfResp;
-				for (C cf : lote) {
-					cfResp = cuerpo.getFECAEDetResponse().get(index);
-					comprobantesRechazados.add(processCFRejected(cfResp, cf));
-					index++;
-				}
-				estado = ESTADO_OK;
-				resultado = RESULTADO_RECHAZADA;
-			}else{// vino un resultado parcial
-				comprobantesAceptados = new ArrayList<ComprobanteFiscal>();
-				comprobantesRechazados = new ArrayList<ComprobanteFiscal>();
-				int index = 0;
-				List<FECAEDetResponse> loteResp = cuerpo.getFECAEDetResponse();
-				FECAEDetResponse cfResp;
-				for (C cf : lote) {
-					cfResp = loteResp.get(index);
-					if(cfResp.getResultado() == RESULTADO_APROBADA){
+		try {
+			
+			if(cabecera != null && cuerpo != null){
+				if(RESULTADO_APROBADA.equals(cabecera.getResultado())){//vineron todos aprobados
+					comprobantesAceptados = new ArrayList<C>();
+					int index = 0;
+					FECAEDetResponse cfResp;
+					for (C cf : lote) {
+						cfResp = cuerpo.getFECAEDetResponse().get(index);
 						comprobantesAceptados.add(processCFAccepted(cfResp, cf));
-					}else{
-						comprobantesRechazados.add(processCFRejected(cfResp, cf));
+						index++;
 					}
-					index++;
+					estado = ESTADO_OK;
+					resultado = RESULTADO_APROBADA;
+				}else if(RESULTADO_RECHAZADA.equals(cabecera.getResultado())){
+					comprobantesRechazados = new ArrayList<C>();
+					int index = 0;
+					FECAEDetResponse cfResp;
+					for (C cf : lote) {
+						cfResp = cuerpo.getFECAEDetResponse().get(index);
+						comprobantesRechazados.add(processCFRejected(cfResp, cf));
+						index++;
+					}
+					estado = ESTADO_OK;
+					resultado = RESULTADO_RECHAZADA;
+				}else{// vino un resultado parcial
+					comprobantesAceptados = new ArrayList<C>();
+					comprobantesRechazados = new ArrayList<C>();
+					int index = 0;
+					List<FECAEDetResponse> loteResp = cuerpo.getFECAEDetResponse();
+					FECAEDetResponse cfResp;
+					for (C cf : lote) {
+						cfResp = loteResp.get(index);
+						if(cfResp.getResultado() == RESULTADO_APROBADA){
+							comprobantesAceptados.add(processCFAccepted(cfResp, cf));
+						}else{
+							comprobantesRechazados.add(processCFRejected(cfResp, cf));
+						}
+						index++;
+					}
+					 lote.subList(index, lote.size()-1);
+					estado = ESTADO_OK;
+					resultado = RESULTADO_PARCIAL;
 				}
-				 lote.subList(index, lote.size()-1);
-				estado = ESTADO_OK;
-				resultado = RESULTADO_PARCIAL;
-			}
-		}else{
-			if(cabecera == null){
-				throw new EsphoraInternalException("Null Header Received from esphora", generateStack());
 			}else{
-				throw new EsphoraInternalException("Null Body Received from esphora", generateStack());
+				if(cabecera == null){
+					throw new EsphoraInternalException("Null Header Received from esphora", generateStack());
+				}else{
+					throw new EsphoraInternalException("Null Body Received from esphora", generateStack());
+				}
 			}
+		} catch (Exception e) {
+			throw new EsphoraUnhandledException("Unhandled FECAE Implementation",e);
 		}
 	}
 	
@@ -118,7 +127,7 @@ public class EsphoraSolicitarResponse implements EsphoraResponse {
 		}
 	}
 	
-	private <C extends ComprobanteFiscal> ComprobanteFiscal processCFAccepted(FECAEDetResponse cfResp, C cf){
+	private C processCFAccepted(FECAEDetResponse cfResp, C cf){
 		if(cfResp != null){
 			cf.setCae(cfResp.getCAE());
 			cf.setVtoCae(Util.parseDate(cfResp.getCAEFchVto()));
@@ -128,14 +137,14 @@ public class EsphoraSolicitarResponse implements EsphoraResponse {
 		return cf;
 	}
 	
-	private <C extends ComprobanteFiscal> ComprobanteFiscal processCFRejected(FECAEDetResponse cfResp, C cf){
+	private C processCFRejected(FECAEDetResponse cfResp, C cf){
 		if(cfResp != null){
 			cf = processCFObs(cfResp, cf);
 		}
-		return (ComprobanteFiscal) cf;
+		return cf;
 	}
 	
-	private <C extends ComprobanteFiscal> C processCFObs(FECAEDetResponse cfResp, C cf){
+	private C processCFObs(FECAEDetResponse cfResp, C cf){
 		if(cfResp.getObservaciones()!=null && cfResp.getObservaciones().getObs()!=null){
 			for (Obs o : cfResp.getObservaciones().getObs()) {
 				cf.addObservacion(o);
@@ -156,6 +165,9 @@ public class EsphoraSolicitarResponse implements EsphoraResponse {
 	
 	@Override
 	public List<EsphoraError> getGlobalErrors(){
+		if(globalErrors==null){
+			globalErrors = new ArrayList<EsphoraError>();
+		}
 		return globalErrors;
 	}
 
@@ -185,13 +197,15 @@ public class EsphoraSolicitarResponse implements EsphoraResponse {
 
 
 	@Override
-	public List<? extends ComprobanteFiscal> getAllApproved() {
+	@SuppressWarnings("unchecked")
+	public List<C> getAllApproved() {
 		return comprobantesAceptados;
 	}
 
 
 	@Override
-	public List<? extends ComprobanteFiscal> getAllRejected() {
+	@SuppressWarnings("unchecked")
+	public List<C> getAllRejected() {
 		return comprobantesRechazados;
 	}
 }

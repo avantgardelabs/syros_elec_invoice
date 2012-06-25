@@ -5,6 +5,7 @@ package ar.com.agtech.syros.fecae.implementations.behaviors;
 
 import java.util.List;
 
+import ar.com.agtech.syros.fecae.elements.Cuit;
 import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraInternalException;
 import ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal;
 import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoComprobante;
@@ -21,5 +22,5 @@ public interface AuthorizeMultiple {
 	 * @see ar.com.agtech.syros.esphora.conector.ComprobanteFiscal.Invoice
 	 * @return List&lt;I extends Invoice&gt; invoices
 	 */
-	EsphoraResponse authorize(TipoComprobante cbte, Integer ptoVta, Long cuitFaturador, List<? extends ComprobanteFiscal> comprobantes) throws EsphoraInternalException;
+	<C extends ComprobanteFiscal> EsphoraResponse authorize(TipoComprobante cbte, Integer ptoVta, Cuit cuitFaturador, List<C> comprobantes) throws EsphoraInternalException;
 }

@@ -3,6 +3,7 @@
  */
 package ar.com.agtech.syros.fecae.implementations.behaviors;
 
+import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraInternalException;
 import ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal;
 
 /**
@@ -17,6 +18,6 @@ public interface AuthorizeSimple {
 	 * @see ar.com.agtech.syros.esphora.conector.ComprobanteFiscal.Invoice
 	 * @return
 	 */
-	<I extends ComprobanteFiscal> I authorize(I invoice);
+	<C extends ComprobanteFiscal> C authorize(C comprobante) throws EsphoraInternalException;
 	
 }

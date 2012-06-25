@@ -23,9 +23,9 @@ public interface EsphoraResponse extends GatewayResponse {
 	
 	boolean hasGlobalErrors();
 	
-	List<? extends ComprobanteFiscal> getAllApproved();
+	<C extends ComprobanteFiscal> List<C> getAllApproved();
 	
-	List<? extends ComprobanteFiscal> getAllRejected();
+	<C extends ComprobanteFiscal> List<C> getAllRejected();
 	
 	List<EsphoraError> getGlobalErrors();
 	

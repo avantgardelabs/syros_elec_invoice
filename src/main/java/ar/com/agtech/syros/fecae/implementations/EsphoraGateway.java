@@ -5,6 +5,7 @@ package ar.com.agtech.syros.fecae.implementations;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +15,9 @@ import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.log4j.Logger;
 
+import ar.com.agtech.syros.fecae.elements.Cuit;
 import ar.com.agtech.syros.fecae.elements.Importe;
+import ar.com.agtech.syros.fecae.exceptions.FECAEException;
 import ar.com.agtech.syros.fecae.implementations.behaviors.EsphoraResponse;
 import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.AlicIva;
 import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.ArrayOfAlicIva;
@@ -25,10 +28,13 @@ import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.FECAEDetReque
 import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.FECAERequest;
 import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.FECAEResponse;
 import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.FERecuperaLastCbteResponse;
+import ar.com.agtech.syros.fecae.implementations.esphora.elements.EsphoraError;
+import ar.com.agtech.syros.fecae.implementations.esphora.elements.EsphoraObservacion;
 import ar.com.agtech.syros.fecae.implementations.esphora.elements.EsphoraSolicitarResponse;
 import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraConnectionException;
 import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraInternalException;
 import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraRemoteException;
+import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraUnhandledException;
 import ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal;
 import ar.com.agtech.syros.fecae.implementations.esphora.services.Wsfev1;
 import ar.com.agtech.syros.fecae.implementations.esphora.services.Wsfev1Service;
@@ -99,74 +105,73 @@ public class EsphoraGateway implements FECAEGateway {
 	 * @see ar.com.agtech.syros.esphora.conector.elements.behaviors.AuthorizeSimple#authorize(ar.com.agtech.syros.esphora.conector.invoices.Comprobante)
 	 */
 	@Override
-	public <C extends ComprobanteFiscal> C authorize(C cf) {
+	@SuppressWarnings("unchecked")
+	public <C extends ComprobanteFiscal> C authorize(C cf) throws EsphoraInternalException {
 		
-		return cf;
+		if(cf==null)
+			throw new EsphoraInternalException("NULL Invoice given");
+		
+		if(cf.isMasiva()){
+			throw new EsphoraInternalException("Invoice of:"+
+			cf.getImporte().getBruto()+
+			" is ready for batch electronic authorization and not single authorization, construct "+
+			cf.getClass().getSimpleName()+
+			" properly");
+		}
+		List<C> cfList = new ArrayList<C>();
+		cfList.add(cf);
+		EsphoraResponse response = authorize(cf.getTipo(), cf.getPuntoDeVenta(), cf.getCuitFacturador(), cfList);
+		if(response.hasGlobalErrors()){
+			for (EsphoraError error : response.getGlobalErrors()) {
+				response.getAllApproved().get(0).getObservaciones()
+					.add(new EsphoraObservacion(error.getOriginalError()));
+			}
+		}
+		return (C) response.getAllApproved().get(0);
+		
 	}
 
 	/* (non-Javadoc)
 	 * @see ar.com.agtech.syros.esphora.conector.elements.behaviors.AuthorizeMultiple#authorize(java.util.List)
 	 */
 	@Override
-	public EsphoraResponse authorize(
-			TipoComprobante cbte, 
+	public <C extends ComprobanteFiscal> EsphoraResponse authorize(
+			TipoComprobante tipoCbte, 
 			Integer ptoVta, 
-			Long cuitFacturador, 
-			List<? extends ComprobanteFiscal> cfList) throws EsphoraInternalException{
+			Cuit cuitFacturador, 
+			List<C> cfList) throws EsphoraInternalException{
 		
 		
-		if(cfList==null || cfList.isEmpty())
-			throw new EsphoraInternalException("Null or empty invoice list given");
-		
-		FERecuperaLastCbteResponse ultimoResp;
+		int nroCbteSecuencial;
 		
 		try {
-			ultimoResp = serviceProxy.feCompUltimoAutorizado(cbte.getId(), ptoVta, cuitFacturador);		
-		} catch (SOAPFaultException e) {
-			log.error("Remote Error Catched...",e);
-			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
-			throw new EsphoraInternalException("SOAP Response could not be parsed",ere);
-		}
-		
-		int nroCbteSecuencial = 0;
-
-		if(ultimoResp==null) throw new EsphoraInternalException("Null response received when trying to connect to esphora");
-		
-		if(ultimoResp.getErrors() != null){
-			List<Err> errors = ultimoResp.getErrors().getErr();
-			EsphoraRemoteException stack = null;
-			for (Err error : errors) {
-				if(stack == null)
-					stack = new EsphoraRemoteException(error.getMsg());
-				else
-					stack = new EsphoraRemoteException(error.getMsg(),stack);
-			}
-			if(!errors.isEmpty()){
-				new EsphoraInternalException("Errors received when asking for last invoice number for type="+cbte.getId()+" and ptoVta="+ptoVta, stack );
-			}
-		}else{
-			nroCbteSecuencial = ultimoResp.getCbteNro();
+			nroCbteSecuencial = getLastInvoiceNumber(tipoCbte, ptoVta, cuitFacturador);
+		} catch (EsphoraRemoteException e) {
+			throw new EsphoraInternalException("Remote Exception Handled",e);
 		}
 		
 		/*generamos el cuerpo del request*/
-		log.debug("Header Generation...");
-		FECAECabRequest cabecera = generarCabecera(cbte,ptoVta,cfList.size());
+		log.info("Header Generation...");
+		FECAECabRequest cabecera = generarCabecera(tipoCbte,ptoVta,cfList.size());
 		log.debug("Body Generation...");
 		ArrayOfFECAEDetRequest lote = new ArrayOfFECAEDetRequest();
 		for (ComprobanteFiscal cf : cfList) {
 			nroCbteSecuencial++;
 			
-			cf.setNumeroComprobante(nroCbteSecuencial);
+			cf.setNumeroComprobante(nroCbteSecuencial);//set correct invoice number
 			
 			FECAEDetRequest cuerpo = generarCuerpo(cf.getImporte(), 
 					cf.getConcepto(), 
 					cf.getTipoDocumentoDeCliente(),
-					cf.getDocumentoDeCliente(),
-					nroCbteSecuencial,cf.getMoneda());
+					cf.getDocumentoDeCliente().getId(),
+					nroCbteSecuencial,
+					cf.getMoneda());
 			
 			lote.getFECAEDetRequest().add(cuerpo);
 		}
-		log.debug("Request Generation...");
+		
+		checkReadyness(cfList);
+		
 		FECAERequest req = new FECAERequest();
 		req.setFeCabReq(cabecera);
 		req.setFeDetReq(lote);
@@ -175,14 +180,14 @@ public class EsphoraGateway implements FECAEGateway {
 		FECAEResponse resp = null;
 		
 		try {
-			resp = serviceProxy.fecaeSolicitar(req, cuitFacturador);
+			resp = serviceProxy.fecaeSolicitar(req, cuitFacturador.getId());
 		} catch (SOAPFaultException e) {
 			log.error("Remote Error Catched...",e);
 			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
 			throw new EsphoraInternalException("SOAP Response could not be parsed",ere);
 		}
 		
-		return new EsphoraSolicitarResponse(resp,cfList);
+		return new EsphoraSolicitarResponse<C>(resp,cfList);
 	}
 	
 	
@@ -200,58 +205,113 @@ public class EsphoraGateway implements FECAEGateway {
         return url;		
 	}
 	
-	private static FECAECabRequest generarCabecera(TipoComprobante cbte, int ptoVta,int cantidad) {
-		
-		FECAECabRequest header = new FECAECabRequest();
-		header.setCantReg(cantidad);
-		int comprobante = Util.obtenerParametroTipoComprobante(cbte);
-		header.setCbteTipo(comprobante);
-		header.setPtoVta(ptoVta);
-		return header;
+	private  <C extends ComprobanteFiscal>  void checkReadyness(List<C> cfList) 
+			throws EsphoraInternalException{
+		if(cfList!=null && cfList.size()>1){
+			try {
+				for (C cf : cfList) {
+					cf.isComplete();
+				}
+			} catch (FECAEException e) {
+				throw new EsphoraInternalException("Invoices not ready for authorization",e);
+			}
+		}else if(cfList==null){
+			throw new EsphoraInternalException("No invoice given for authorization");
+		}
 	}
 	
-	private static FECAEDetRequest generarCuerpo(Importe importe, TipoConcepto cpto, TipoDocumento td, long nroDoc, long nroCbte, TipoMoneda tMon) {
+	private int getLastInvoiceNumber(TipoComprobante tipoCbte, Integer ptoVta, Cuit cuitFacturador)
+		throws EsphoraInternalException, EsphoraRemoteException {
 		
-		FECAEDetRequest cuerpo = new FECAEDetRequest();
+		FERecuperaLastCbteResponse ultimoResp;
 		
-		cuerpo.setConcepto(cpto.getId());
-		cuerpo.setDocTipo(td.getId());
-
-		cuerpo.setDocNro(nroDoc);
-		cuerpo.setCbteDesde(nroCbte);
-		cuerpo.setCbteHasta(nroCbte);
-		
-		String fechaCbte = Util.dateTransform(new Date());
-		cuerpo.setCbteFch(fechaCbte);
-		
-		if(cpto != TipoConcepto.PRODUCTOS){
-			String fechaVtoPago = Util.dateTransform(new Date());
-			cuerpo.setFchVtoPago(fechaVtoPago);
-			cuerpo.setFchServDesde(Util.dateTransform(new Date()));
-			cuerpo.setFchServHasta(Util.dateTransform(new Date()));
+		try {
+			ultimoResp = serviceProxy.feCompUltimoAutorizado(tipoCbte.getId(), ptoVta, cuitFacturador.getId());		
+		} catch (SOAPFaultException e) {
+			log.error("Remote Error Catched...",e);
+			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
+			throw new EsphoraInternalException("SOAP Response could not be parsed",ere);
 		}
 		
-		cuerpo.setImpOpEx(0.00d);
-		cuerpo.setImpTotConc(0.00);
-		cuerpo.setImpTrib(0.00d);
-		cuerpo.setMonCotiz(1.00d);
-		cuerpo.setMonId(tMon.getId());
+
+		if(ultimoResp==null){
+			throw new EsphoraInternalException("Null response received when trying to connect to esphora");
+		}else if(ultimoResp.getErrors() != null){
+			List<Err> errors = ultimoResp.getErrors().getErr();
+			EsphoraRemoteException stack = null;
+			for (Err error : errors) {
+				if(stack == null)
+					stack = new EsphoraRemoteException(error.getMsg());
+				else
+					stack = new EsphoraRemoteException(error.getMsg(),stack);
+			}
+			throw new EsphoraInternalException("Errors received when asking for last invoice number for type="+tipoCbte.getId()+" and ptoVta="+ptoVta, stack );
+		}else{
+			return ultimoResp.getCbteNro();
+		}
+	}
+	
+	private static FECAECabRequest generarCabecera(TipoComprobante cbte, int ptoVta,int cantidad) 
+		throws EsphoraUnhandledException{
+		try {
+			FECAECabRequest header = new FECAECabRequest();
+			header.setCantReg(cantidad);
+			int comprobante = Util.obtenerParametroTipoComprobante(cbte);
+			header.setCbteTipo(comprobante);
+			header.setPtoVta(ptoVta);
+			return header;
+		} catch (Exception e) {
+			throw new EsphoraUnhandledException("Unhandled Esphora Exception",e);
+		}
+	}
+	
+	private static FECAEDetRequest generarCuerpo(Importe importe, TipoConcepto cpto, TipoDocumento td, long nroDoc, long nroCbte, TipoMoneda tMon)
+		throws EsphoraInternalException {
 		
-		cuerpo.setImpNeto(importe.getNeto().doubleValue());
-		
-		
-		ArrayOfAlicIva objIva = new ArrayOfAlicIva();
-		AlicIva iva = new AlicIva();
-		iva.setBaseImp(importe.getNeto().doubleValue());
-		iva.setId(Util.obtenerTipoIvaEsphora(importe.getTipoIva()));
-		iva.setImporte(importe.getIva().doubleValue());
-		objIva.getAlicIva().add(iva);
-		cuerpo.setIva(objIva);
-		cuerpo.setImpIVA(importe.getIva().doubleValue());
-		
-		cuerpo.setImpTotal(importe.getBruto().doubleValue());
-		
-		return cuerpo;
+		try {
+			FECAEDetRequest cuerpo = new FECAEDetRequest();
+			
+			cuerpo.setConcepto(cpto.getId());
+			cuerpo.setDocTipo(td.getId());
+
+			cuerpo.setDocNro(nroDoc);
+			cuerpo.setCbteDesde(nroCbte);
+			cuerpo.setCbteHasta(nroCbte);
+			
+			String fechaCbte = Util.dateTransform(new Date());
+			cuerpo.setCbteFch(fechaCbte);
+			
+			if(cpto != TipoConcepto.PRODUCTOS){
+				String fechaVtoPago = Util.dateTransform(new Date());
+				cuerpo.setFchVtoPago(fechaVtoPago);
+				cuerpo.setFchServDesde(Util.dateTransform(new Date()));
+				cuerpo.setFchServHasta(Util.dateTransform(new Date()));
+			}
+			
+			cuerpo.setImpOpEx(0.00d);
+			cuerpo.setImpTotConc(0.00);
+			cuerpo.setImpTrib(0.00d);
+			cuerpo.setMonCotiz(1.00d);
+			cuerpo.setMonId(tMon.getId());
+			
+			cuerpo.setImpNeto(importe.getNeto().doubleValue());
+			
+			
+			ArrayOfAlicIva objIva = new ArrayOfAlicIva();
+			AlicIva iva = new AlicIva();
+			iva.setBaseImp(importe.getNeto().doubleValue());
+			iva.setId(Util.obtenerTipoIvaEsphora(importe.getTipoIva()));
+			iva.setImporte(importe.getIva().doubleValue());
+			objIva.getAlicIva().add(iva);
+			cuerpo.setIva(objIva);
+			cuerpo.setImpIVA(importe.getIva().doubleValue());
+			
+			cuerpo.setImpTotal(importe.getBruto().doubleValue());
+			
+			return cuerpo;
+		} catch (Exception e) {
+			throw new EsphoraUnhandledException("Unhandled Esphora Exception",e);
+		}
 	}
 
 }
