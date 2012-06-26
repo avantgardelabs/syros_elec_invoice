@@ -8,14 +8,14 @@ import ar.com.agtech.syros.fecae.elements.Cuit;
 import ar.com.agtech.syros.fecae.elements.Identification;
 import ar.com.agtech.syros.fecae.elements.Importe;
 import ar.com.agtech.syros.fecae.exceptions.FECAEException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceClientIDTypeException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceConceptTypeException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceFeeException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceNumberException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceSalePointException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceTypeException;
 import ar.com.agtech.syros.fecae.implementations.esphora.artifacts.Obs;
 import ar.com.agtech.syros.fecae.implementations.esphora.elements.EsphoraObservacion;
-import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.InvalidConceptTypeException;
-import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.InvalidDocumentTypeException;
-import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.InvalidFeeException;
-import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.InvalidInvoiceNumberException;
-import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.InvalidInvoiceTypeException;
-import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.InvalidSalePointException;
 import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoComprobante;
 import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoConcepto;
 import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoDocumento;
@@ -50,7 +50,9 @@ public abstract class ComprobanteFiscal {
 	
 	private String cae;
 	
-	private String estado;
+	private int estado;
+	
+	private String resultado;
 	
 	private Date vtoCae;
 	
@@ -146,8 +148,15 @@ public abstract class ComprobanteFiscal {
 	/**
 	 * @return the estado
 	 */
-	public String getEstado() {
+	public int getEstado() {
 		return estado;
+	}
+	
+	/**
+	 * @return the estado
+	 */
+	public String getResultado() {
+		return resultado;
 	}
 
 	/**
@@ -244,8 +253,15 @@ public abstract class ComprobanteFiscal {
 	/**
 	 * @param estado the estado to set
 	 */
-	public void setEstado(String estado) {
+	public void setEstado(int estado) {
 		this.estado = estado;
+	}
+	
+	/**
+	 * @param estado the estado to set
+	 */
+	public void setResultado(String resultado) {
+		this.resultado = resultado;
 	}
 
 	/**
@@ -273,14 +289,14 @@ public abstract class ComprobanteFiscal {
 		boolean complete = true;
 		if(!isMasiva()){
 			cuitFacturador.validar();
-			if(puntoDeVenta==null) throw new InvalidSalePointException("Missing Sale Point");
+			if(puntoDeVenta==null) throw new InvalidInvoiceSalePointException("Missing Sale Point");
 		}
 		documentoDeCliente.validar();
 		if(tipo==null) throw new InvalidInvoiceTypeException("Missing Invoice Type");
-		if(concepto==null) throw new InvalidConceptTypeException("Missing Concept Type");
-		if(tipoDocumentoDeCliente==null) throw new InvalidDocumentTypeException("Missing ID Type");
+		if(concepto==null) throw new InvalidInvoiceConceptTypeException("Missing Concept Type");
+		if(tipoDocumentoDeCliente==null) throw new InvalidInvoiceClientIDTypeException("Missing ID Type");
 		if(numeroComprobante==null) throw new InvalidInvoiceNumberException("Missing Invoice Number");
-		if(importe==null) throw new InvalidFeeException("Missing Fee Amount");
+		if(importe==null) throw new InvalidInvoiceFeeException("Missing Fee Amount");
 		return complete;
 	}
 	

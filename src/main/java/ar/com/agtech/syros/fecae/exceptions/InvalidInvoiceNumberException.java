@@ -1,15 +1,14 @@
 /**
  * 
  */
-package ar.com.agtech.syros.fecae.implementations.esphora.exceptions;
+package ar.com.agtech.syros.fecae.exceptions;
 
-import ar.com.agtech.syros.fecae.exceptions.FECAEException;
 
 /**
  * @author Jorge Morando
  *
  */
-public class InvalidInvoiceNumberException extends FECAEException {
+public class InvalidInvoiceNumberException extends InvalidInvoiceException {
 
 	private static final long serialVersionUID = -1690750835866242609L;
 

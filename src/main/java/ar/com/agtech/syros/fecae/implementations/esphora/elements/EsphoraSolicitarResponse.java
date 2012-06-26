@@ -90,10 +90,11 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 							comprobantesAceptados.add(processCFAccepted(cfResp, cf));
 						}else{
 							comprobantesRechazados.add(processCFRejected(cfResp, cf));
+							comprobantesRechazados.addAll(lote.subList(index+1, lote.size()-1));
+							break;
 						}
 						index++;
 					}
-					 lote.subList(index, lote.size()-1);
 					estado = ESTADO_OK;
 					resultado = RESULTADO_PARCIAL;
 				}
@@ -104,6 +105,8 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 					throw new EsphoraInternalException("Null Body Received from esphora", generateStack());
 				}
 			}
+		} catch (EsphoraInternalException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new EsphoraUnhandledException("Unhandled FECAE Implementation",e);
 		}
@@ -131,7 +134,8 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 		if(cfResp != null){
 			cf.setCae(cfResp.getCAE());
 			cf.setVtoCae(Util.parseDate(cfResp.getCAEFchVto()));
-			cf.setEstado(cfResp.getResultado());
+			cf.setEstado(ESTADO_OK);
+			cf.setResultado(cfResp.getResultado());
 			cf = processCFObs(cfResp, cf);
 		}
 		return cf;
@@ -139,6 +143,8 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 	
 	private C processCFRejected(FECAEDetResponse cfResp, C cf){
 		if(cfResp != null){
+			cf.setEstado(ESTADO_NOK);
+			cf.setResultado(cfResp.getResultado());
 			cf = processCFObs(cfResp, cf);
 		}
 		return cf;
@@ -199,6 +205,8 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<C> getAllApproved() {
+		if(comprobantesAceptados==null)
+			comprobantesAceptados = new ArrayList<C>();
 		return comprobantesAceptados;
 	}
 
@@ -206,6 +214,8 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<C> getAllRejected() {
+		if(comprobantesRechazados==null)
+			comprobantesRechazados = new ArrayList<C>();
 		return comprobantesRechazados;
 	}
 }

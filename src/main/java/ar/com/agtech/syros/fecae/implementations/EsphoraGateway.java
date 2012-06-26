@@ -141,7 +141,6 @@ public class EsphoraGateway implements FECAEGateway {
 			Cuit cuitFacturador, 
 			List<C> cfList) throws EsphoraInternalException{
 		
-		
 		int nroCbteSecuencial;
 		
 		try {
@@ -151,7 +150,7 @@ public class EsphoraGateway implements FECAEGateway {
 		}
 		
 		/*generamos el cuerpo del request*/
-		log.info("Header Generation...");
+		log.debug("Header Generation...");
 		FECAECabRequest cabecera = generarCabecera(tipoCbte,ptoVta,cfList.size());
 		log.debug("Body Generation...");
 		ArrayOfFECAEDetRequest lote = new ArrayOfFECAEDetRequest();
@@ -186,7 +185,7 @@ public class EsphoraGateway implements FECAEGateway {
 			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
 			throw new EsphoraInternalException("SOAP Response could not be parsed",ere);
 		}
-		
+		log.debug("Done!");
 		return new EsphoraSolicitarResponse<C>(resp,cfList);
 	}
 	
