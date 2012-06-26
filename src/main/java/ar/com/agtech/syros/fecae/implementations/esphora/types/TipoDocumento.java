@@ -3,6 +3,7 @@
  */
 package ar.com.agtech.syros.fecae.implementations.esphora.types;
 
+import static ar.com.agtech.syros.fecae.implementations.esphora.elements.Constants.TIPO_DOC_OTRO;
 import static ar.com.agtech.syros.fecae.implementations.esphora.elements.Constants.TIPO_DOC_CUIL;
 import static ar.com.agtech.syros.fecae.implementations.esphora.elements.Constants.TIPO_DOC_CUIT;
 import static ar.com.agtech.syros.fecae.implementations.esphora.elements.Constants.TIPO_DOC_DNI;
@@ -12,6 +13,7 @@ import static ar.com.agtech.syros.fecae.implementations.esphora.elements.Constan
  *
  */
 public enum TipoDocumento {
+	OTRO(TIPO_DOC_OTRO),
 	CUIT(TIPO_DOC_CUIT),
 	CUIL(TIPO_DOC_CUIL),
 	DNI(TIPO_DOC_DNI);

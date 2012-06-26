@@ -59,10 +59,10 @@ public class TestFA {
 		cuitCliente = new Cuit(33679836299L);
 		gateway = new EsphoraGateway();
 		gateway.init();
-		//El objeto importe discrimina IVA automáticamente ya que le indicamos que se le pasa un valor NETO
-		importe = new Importe(new BigDecimal(importeStr), tipoIva, TipoImporte.NETO);
 		tipoIva = TipoIva.VEINTIUNO;
 		importeStr = "7117.7043";
+		//El objeto importe discrimina IVA automáticamente ya que le indicamos que se le pasa un valor NETO
+		importe = new Importe(new BigDecimal(importeStr), tipoIva, TipoImporte.NETO);
 	}
 	
 	@Test

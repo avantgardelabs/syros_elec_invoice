@@ -121,14 +121,17 @@ public class EsphoraGateway implements FECAEGateway {
 		List<C> cfList = new ArrayList<C>();
 		cfList.add(cf);
 		EsphoraResponse response = authorize(cf.getTipo(), cf.getPuntoDeVenta(), cf.getCuitFacturador(), cfList);
+		if(response==null) throw new EsphoraInternalException("Null result response");
 		if(response.hasGlobalErrors()){
 			for (EsphoraError error : response.getGlobalErrors()) {
 				response.getAllApproved().get(0).getObservaciones()
 					.add(new EsphoraObservacion(error.getOriginalError()));
 			}
 		}
-		return (C) response.getAllApproved().get(0);
-		
+		if(EsphoraResponse.RESULTADO_APROBADA.equals(response.getResultado()))
+			return (C) response.getAllApproved().get(0);
+		else
+			return (C) response.getAllRejected().get(0);
 	}
 
 	/* (non-Javadoc)
@@ -143,16 +146,11 @@ public class EsphoraGateway implements FECAEGateway {
 		
 		int nroCbteSecuencial;
 		
-		try {
-			nroCbteSecuencial = getLastInvoiceNumber(tipoCbte, ptoVta, cuitFacturador);
-		} catch (EsphoraRemoteException e) {
-			throw new EsphoraInternalException("Remote Exception Handled",e);
-		}
+		log.debug("Retrieving last invoice number...");
+		nroCbteSecuencial = getLastInvoiceNumber(tipoCbte, ptoVta, cuitFacturador);
 		
-		/*generamos el cuerpo del request*/
-		log.debug("Header Generation...");
+		/*generamos la cabecera y el cuerpo del request*/
 		FECAECabRequest cabecera = generarCabecera(tipoCbte,ptoVta,cfList.size());
-		log.debug("Body Generation...");
 		ArrayOfFECAEDetRequest lote = new ArrayOfFECAEDetRequest();
 		for (ComprobanteFiscal cf : cfList) {
 			nroCbteSecuencial++;
@@ -175,13 +173,13 @@ public class EsphoraGateway implements FECAEGateway {
 		req.setFeCabReq(cabecera);
 		req.setFeDetReq(lote);
 		
-		log.debug("Requesting...");
+		log.debug("Requesting Authorization...");
 		FECAEResponse resp = null;
 		
 		try {
 			resp = serviceProxy.fecaeSolicitar(req, cuitFacturador.getId());
 		} catch (SOAPFaultException e) {
-			log.error("Remote Error Catched...",e);
+			log.error("SoapFaultException catched",e);
 			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
 			throw new EsphoraInternalException("SOAP Response could not be parsed",ere);
 		}
@@ -220,16 +218,16 @@ public class EsphoraGateway implements FECAEGateway {
 	}
 	
 	private int getLastInvoiceNumber(TipoComprobante tipoCbte, Integer ptoVta, Cuit cuitFacturador)
-		throws EsphoraInternalException, EsphoraRemoteException {
+		throws EsphoraInternalException {
 		
 		FERecuperaLastCbteResponse ultimoResp;
 		
 		try {
 			ultimoResp = serviceProxy.feCompUltimoAutorizado(tipoCbte.getId(), ptoVta, cuitFacturador.getId());		
 		} catch (SOAPFaultException e) {
-			log.error("Remote Error Catched...",e);
+			log.error("SoapFaultException Catched...",e);
 			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
-			throw new EsphoraInternalException("SOAP Response could not be parsed",ere);
+			throw new EsphoraInternalException("Unable to get last authorized Invoice number",ere);
 		}
 		
 

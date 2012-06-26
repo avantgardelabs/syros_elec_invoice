@@ -5,11 +5,15 @@ import java.util.Date;
 import java.util.List;
 
 import ar.com.agtech.syros.fecae.elements.Cuit;
+import ar.com.agtech.syros.fecae.elements.GenericID;
 import ar.com.agtech.syros.fecae.elements.Identification;
 import ar.com.agtech.syros.fecae.elements.Importe;
+import ar.com.agtech.syros.fecae.elements.types.TipoCategoria;
 import ar.com.agtech.syros.fecae.exceptions.FECAEException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidIDException;
 import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceClientIDTypeException;
 import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceConceptTypeException;
+import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceException;
 import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceFeeException;
 import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceNumberException;
 import ar.com.agtech.syros.fecae.exceptions.InvalidInvoiceSalePointException;
@@ -27,6 +31,8 @@ import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoMoneda;
  *
  */
 public abstract class ComprobanteFiscal {
+	
+	private TipoCategoria categoria;
 	
 	private Importe importe;
 	
@@ -65,7 +71,7 @@ public abstract class ComprobanteFiscal {
 		this.moneda=TipoMoneda.PESOS_ARGENTINOS;
 		this.masiva=false;
 	}
-
+	
 	/**
 	 * @return the importe
 	 */
@@ -185,6 +191,14 @@ public abstract class ComprobanteFiscal {
 	 */
 	public void setTipo(TipoComprobante tipo) {
 		this.tipo = tipo;
+		if(tipo!=null){
+			if(tipo.equals(TipoComprobante.FACTURA_A) || tipo.equals(TipoComprobante.NOTA_CREDITO_A) || tipo.equals(TipoComprobante.NOTA_DEBITO_A))
+				this.categoria = TipoCategoria.A;
+			if(tipo.equals(TipoComprobante.FACTURA_B) || tipo.equals(TipoComprobante.NOTA_CREDITO_B) || tipo.equals(TipoComprobante.NOTA_DEBITO_B))
+				this.categoria = TipoCategoria.B;
+			if(tipo.equals(TipoComprobante.FACTURA_C) || tipo.equals(TipoComprobante.NOTA_CREDITO_C) || tipo.equals(TipoComprobante.NOTA_DEBITO_C))
+				this.categoria = TipoCategoria.C;
+		}
 	}
 
 	/**
@@ -233,7 +247,10 @@ public abstract class ComprobanteFiscal {
 	 * @param documentoDeCliente the documentoDeCliente to set
 	 */
 	public void setDocumentoDeCliente(Identification documentoDeCliente) {
-		this.documentoDeCliente = documentoDeCliente;
+		if(documentoDeCliente == null)
+			this.documentoDeCliente = new GenericID();
+		else
+			this.documentoDeCliente = documentoDeCliente;
 	}
 
 	/**
@@ -291,13 +308,33 @@ public abstract class ComprobanteFiscal {
 			cuitFacturador.validar();
 			if(puntoDeVenta==null) throw new InvalidInvoiceSalePointException("Missing Sale Point");
 		}
-		documentoDeCliente.validar();
 		if(tipo==null) throw new InvalidInvoiceTypeException("Missing Invoice Type");
+		validarCategoriaConTipoDeComprobante();
+		documentoDeCliente.validar();
 		if(concepto==null) throw new InvalidInvoiceConceptTypeException("Missing Concept Type");
-		if(tipoDocumentoDeCliente==null) throw new InvalidInvoiceClientIDTypeException("Missing ID Type");
 		if(numeroComprobante==null) throw new InvalidInvoiceNumberException("Missing Invoice Number");
 		if(importe==null) throw new InvalidInvoiceFeeException("Missing Fee Amount");
 		return complete;
+	}
+	
+	private void validarCategoriaConTipoDeComprobante() throws InvalidInvoiceException, InvalidIDException{
+		if(tipoDocumentoDeCliente==null) throw new InvalidInvoiceClientIDTypeException("Missing ID Type");
+		if(categoria==null) throw new InvalidInvoiceException("Invalid Invoice Category");
+		if(categoria.equals(TipoCategoria.A)){
+			if(tipoDocumentoDeCliente.equals(TipoDocumento.OTRO)){ //si es A y no viene con tipoDeDocumento valido para a 
+				throw new InvalidInvoiceClientIDTypeException("Invoice type A must have a valid ID Type");
+			}else{
+				if(documentoDeCliente==null) throw new InvalidIDException("Missing ID number");
+			}
+		}else{
+			if(tipoDocumentoDeCliente.equals(TipoDocumento.OTRO)){
+				if(!(documentoDeCliente instanceof GenericID))
+					throw new InvalidIDException("Invoice ID not generic type");
+			}else{
+				if(documentoDeCliente instanceof GenericID)
+					throw new InvalidIDException("Invoice ID generic type given but " + tipoDocumentoDeCliente.getClass().getSimpleName() + " specified");
+			}
+		}
 	}
 	
 }

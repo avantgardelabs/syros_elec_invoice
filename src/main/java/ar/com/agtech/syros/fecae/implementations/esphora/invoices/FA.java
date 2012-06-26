@@ -77,5 +77,4 @@ public class FA extends ComprobanteFiscal {
 		this.setConcepto(tipoConcepto);
 		this.setImporte(importe);
 	}
-
 }

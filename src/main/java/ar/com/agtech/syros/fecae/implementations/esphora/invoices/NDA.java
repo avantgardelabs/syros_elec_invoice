@@ -16,7 +16,7 @@ import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoDocumento;
  * 
  */
 public class NDA extends ComprobanteFiscal {
-	
+
 	/**
 	 * <b>NO APTA PARA FACTURACI&Oacute;N ELECTR&Oacute;NICA MASIVA</b><br>
 	 * Crea un Objeto de tipo Nota de D&eacute;bito A<br>
@@ -77,5 +77,4 @@ public class NDA extends ComprobanteFiscal {
 		this.setConcepto(tipoConcepto);
 		this.setImporte(importe);
 	}
-
 }

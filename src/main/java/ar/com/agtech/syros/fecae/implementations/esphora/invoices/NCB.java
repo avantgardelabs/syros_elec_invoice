@@ -77,5 +77,4 @@ public class NCB extends ComprobanteFiscal {
 		this.setConcepto(tipoConcepto);
 		this.setImporte(importe);
 	}
-
 }

@@ -77,5 +77,4 @@ public class NCA extends ComprobanteFiscal {
 		this.setConcepto(tipoConcepto);
 		this.setImporte(importe);
 	}
-
 }

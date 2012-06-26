@@ -77,5 +77,4 @@ public class FC extends ComprobanteFiscal {
 		this.setConcepto(tipoConcepto);
 		this.setImporte(importe);
 	}
-
 }

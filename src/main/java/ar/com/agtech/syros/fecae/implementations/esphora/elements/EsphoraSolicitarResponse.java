@@ -28,14 +28,6 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 
 	private static Logger log = Logger.getLogger(EsphoraSolicitarResponse.class);
 	
-	public static final int ESTADO_NOK = 0;
-	public static final int ESTADO_OK = 1;
-	public static final int ESTADO_ERROR = 666;
-	
-	public static final String RESULTADO_RECHAZADA = "R";
-	public static final String RESULTADO_APROBADA = "A";
-	public static final String RESULTADO_PARCIAL = "P";
-	
 	private List<C> comprobantesAceptados;
 	private List<C> comprobantesRechazados;
 	
@@ -46,7 +38,6 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 	
 	
 	public EsphoraSolicitarResponse(FECAEResponse rawResp, List<C> lote) throws EsphoraInternalException{
-		log.debug("Se construye objeto de respuesta");
 		if(rawResp.getErrors()!=null){
 			translateErrors(rawResp.getErrors().getErr());
 		}
@@ -100,14 +91,17 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 				}
 			}else{
 				if(cabecera == null){
+					log.error("Null Header Received from esphora");
 					throw new EsphoraInternalException("Null Header Received from esphora", generateStack());
 				}else{
+					log.error("Null Body Received from esphora");
 					throw new EsphoraInternalException("Null Body Received from esphora", generateStack());
 				}
 			}
 		} catch (EsphoraInternalException e) {
 			throw e;
 		} catch (Exception e) {
+			log.error("Unhandled FECAE Implementation",e);
 			throw new EsphoraUnhandledException("Unhandled FECAE Implementation",e);
 		}
 	}

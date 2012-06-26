@@ -4,6 +4,7 @@
 package ar.com.agtech.syros.fecae.elements;
 
 import ar.com.agtech.syros.fecae.exceptions.InvalidIDException;
+import ar.com.agtech.syros.fecae.implementations.esphora.exceptions.EsphoraUnhandledException;
 
 /**
  * @author Jorge Morando
@@ -26,6 +27,7 @@ public final class Cuit implements Identification {
 	
 	public void validar() throws InvalidIDException {
 		try {
+			if(cuit==null) throw new NullPointerException("Null CUIT given");
 			if(cuit.toString().length()!=11) throw new IndexOutOfBoundsException("Invalid CUIT length:"+cuit.toString().length()+"must 11 digits");
 			sexo = cuit / (long) Math.pow(10, 9);
 			dni = cuit / 10 - sexo * (long) Math.pow(10, 8);
@@ -42,9 +44,13 @@ public final class Cuit implements Identification {
 			digito = digito.equals(10) ? 9 : digito;
 			
 			if(!verificador.equals(digito)) throw new InvalidIDException("Invalid CUIT Check digit");
-			
-		} catch (Exception e) {
+		} catch (IndexOutOfBoundsException e) {
 			throw new InvalidIDException("Invalid CUIT",e);
+		} catch (NullPointerException e) {
+			throw new InvalidIDException("Invalid CUIT",e);
+		} catch (Exception e) {
+			EsphoraUnhandledException eue = new EsphoraUnhandledException("Unahndled Exception Catched",e);
+			throw new InvalidIDException("Invalid CUIT",eue);
 		}
 	}
 	

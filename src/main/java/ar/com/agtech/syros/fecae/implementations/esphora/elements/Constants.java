@@ -20,16 +20,22 @@ public class Constants {
 	public static final int TIPO_COMPROBANTE_NOTA_CREDITO_B = 8;
 	public static final int TIPO_COMPROBANTE_NOTA_CREDITO_C = 13;
 	
+	
 	public static final String TIPO_MONEDA_PESOS_ARGENTINOS = "PES";
 	public static final String TIPO_MONEDA_DOLARES_AMERICANOS = "DOL";
 	
 	public static final int TIPO_DOC_CUIT = 80;
 	public static final int TIPO_DOC_CUIL = 86;
 	public static final int TIPO_DOC_DNI = 96;
+	public static final int TIPO_DOC_OTRO = 99;
 	
 	public static final int TIPO_IVA_CERO = 3;
 	public static final int TIPO_IVA_DIEZ_COMA_CINCO = 4;
 	public static final int TIPO_IVA_VEINTIUNO = 5;
 	public static final int TIPO_IVA_VEINTISIETE = 6;
+
+	public static final String CATEGORIA_A ="A";
+	public static final String CATEGORIA_B ="B";
+	public static final String CATEGORIA_C ="C";
 	
 }

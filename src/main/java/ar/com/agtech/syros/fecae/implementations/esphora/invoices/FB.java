@@ -17,6 +17,7 @@ import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoDocumento;
  */
 public class FB extends ComprobanteFiscal {
 	
+	
 	/**
 	 * <b>NO APTA PARA FACTURACI&Oacute;N ELECTR&Oacute;NICA MASIVA</b><br>
 	 * Crea un Objeto de tipo Factura B<br>
@@ -77,5 +78,4 @@ public class FB extends ComprobanteFiscal {
 		this.setConcepto(tipoConcepto);
 		this.setImporte(importe);
 	}
-
 }
