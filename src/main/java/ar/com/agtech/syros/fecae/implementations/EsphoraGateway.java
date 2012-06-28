@@ -98,6 +98,10 @@ public class EsphoraGateway implements FECAEGateway {
 			log.error("Error retreiving WS Port",e);
 			EsphoraConnectionException ece = new EsphoraConnectionException("No se pudo establecer el puente con los WS de Esphora",e);
 			throw new EsphoraInternalException("No open connection with WSPort",ece);
+		} catch (Exception e) {
+			log.error("Error connecting to WS Port",e);
+			EsphoraConnectionException ece = new EsphoraConnectionException("No se pudo establecer el puente con los WS de Esphora",e);
+			throw new EsphoraInternalException("Remote Exception Catched",ece);
 		}
 	}
 
@@ -146,9 +150,9 @@ public class EsphoraGateway implements FECAEGateway {
 		
 		int nroCbteSecuencial;
 		
-		log.debug("Retrieving last invoice number...");
+		log.info("Retrieving last invoice number...");
 		nroCbteSecuencial = getLastInvoiceNumber(tipoCbte, ptoVta, cuitFacturador);
-		
+		log.debug("Last invoice number is "+nroCbteSecuencial);
 		/*generamos la cabecera y el cuerpo del request*/
 		FECAECabRequest cabecera = generarCabecera(tipoCbte,ptoVta,cfList.size());
 		ArrayOfFECAEDetRequest lote = new ArrayOfFECAEDetRequest();
@@ -173,7 +177,7 @@ public class EsphoraGateway implements FECAEGateway {
 		req.setFeCabReq(cabecera);
 		req.setFeDetReq(lote);
 		
-		log.debug("Requesting Authorization...");
+		log.info("Requesting Authorization to Esphora...");
 		FECAEResponse resp = null;
 		
 		try {
@@ -183,7 +187,7 @@ public class EsphoraGateway implements FECAEGateway {
 			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
 			throw new EsphoraInternalException("SOAP Response could not be parsed",ere);
 		}
-		log.debug("Done!");
+		log.info("Done!");
 		return new EsphoraSolicitarResponse<C>(resp,cfList);
 	}
 	

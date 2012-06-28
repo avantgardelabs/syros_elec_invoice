@@ -14,9 +14,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ar.com.agtech.syros.fecae.elements.Cuit;
+import ar.com.agtech.syros.fecae.elements.Dni;
 import ar.com.agtech.syros.fecae.elements.Importe;
 import ar.com.agtech.syros.fecae.elements.types.TipoImporte;
 import ar.com.agtech.syros.fecae.elements.types.TipoIva;
@@ -27,7 +29,6 @@ import ar.com.agtech.syros.fecae.implementations.behaviors.EsphoraResponse;
 import ar.com.agtech.syros.fecae.implementations.esphora.elements.EsphoraError;
 import ar.com.agtech.syros.fecae.implementations.esphora.elements.EsphoraObservacion;
 import ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal;
-import ar.com.agtech.syros.fecae.implementations.esphora.invoices.FA;
 import ar.com.agtech.syros.fecae.implementations.esphora.invoices.FB;
 import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoComprobante;
 import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoConcepto;
@@ -39,31 +40,36 @@ import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoDocumento;
  */
 public class TestFB {
 	
+	private static final Logger log = Logger.getLogger(TestFB.class);
 	private static Cuit cuitFacturador;
 	private static Cuit cuitCliente;
-	
-	private static final Logger log = Logger.getLogger(TestFB.class);
-
+	private static Dni dniCliente;
 	private static FECAEGateway gateway;
-	
 	private static TipoIva tipoIva;
-	
 	private static String importeStr;
 	private static Importe importe;
+	private static int sleepTime;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUp() throws Exception {
 		cuitFacturador = new Cuit(30710370792L);
 		cuitCliente = new Cuit(33679836299L);
+		dniCliente = new Dni(67983629L);
 		gateway = new EsphoraGateway();
 		gateway.init();
 		tipoIva = TipoIva.VEINTIUNO;
-		importeStr = "7117.7043";
+		importeStr = "117.7043";
 		//El objeto importe discrimina IVA automáticamente ya que le indicamos que se le pasa un valor NETO
 		importe = new Importe(Importe.calcularBruto(new BigDecimal(importeStr), tipoIva) , tipoIva, TipoImporte.BRUTO);
+		sleepTime = 60;
+	}
+	
+	@Before
+	public void printSeparator(){
+		System.out.println("-----------------------------------------------------------------------");
 	}
 	
 	@Test
@@ -92,59 +98,60 @@ public class TestFB {
 		} 
 	}
 	
-//	@Test
-//	public void FAMasiva() {
-//		try {
-////			log.debug("Sleeping for 45 secs due to ESPHORA reconnection problem");
-////			Thread.sleep(45000);
-//			log.debug("Generando Lote Facturas A iva discriminado");
-//			
-//			List<FB> facturasB = new ArrayList<FB>();
-//			
-//			FB fb = new FB(TipoDocumento.CUIT, cuitCliente, TipoConcepto.PRODUCTOS, importe);
-//			facturasB.add(fb);
-//			FB fb2 = new FB(TipoDocumento.CUIT, cuitCliente, TipoConcepto.PRODUCTOS, importe);
-//			facturasB.add(fb2);
-//			FB fb3 = new FB(TipoDocumento.CUIT, cuitCliente, TipoConcepto.PRODUCTOS, importe);
-//			facturasB.add(fb3);
-//			
-//			EsphoraResponse response = gateway.authorize(TipoComprobante.FACTURA_B, 1, cuitFacturador, facturasB);
-//			
-//			log.info("ESTADO: "+response.getEstado());
-//			log.info("RESULTADO: "+response.getResultado());
-//			
-//			log.info("TOTAL APROVADAS: "+response.getTotalApproved());
-//			for (ComprobanteFiscal cfAccepted : response.getAllApproved()) {
-//				log.info("CAE:"+cfAccepted.getCae()+" - "+cfAccepted.getVtoCae());
-//			}
-//			
-//			log.info("TOTAL RECHAZADAS: "+response.getTotalRejected());
-//			for (ComprobanteFiscal cfRejected : response.getAllRejected()) {
-//				List<EsphoraObservacion> obs = cfRejected.getObservaciones();
-//				if(obs!=null){
-//					for (EsphoraObservacion o : obs) {
-//						log.error(o.getMessage());
-//					}
-//				}
-//			}
-//			
-//			List<EsphoraError> errores = response.getGlobalErrors();
-//			if(errores!=null){
-//				for (EsphoraError error : errores) {
-//					log.error(error.getMessage());
-//				}
-//			}
-//			
-//			assertNotNull("La respuesta de es nula", response);
-//			assertNull("Se obtovieron errores en la llamada al servicio",response.getGlobalErrors());
-//		} catch (FECAEException e) {
-//			log.error("ERROR",e);
-//			fail(e.getMessage());
-//		} catch (InterruptedException e) {
-//			log.error("ERROR",e);
-//			fail(e.getMessage());
-//		} 
-//	}
+	@Test
+	public void FBMasiva() {
+		try {
+			log.debug("Sleeping for "+sleepTime+" secs due to ESPHORA reconnection problem");
+			int sleepMillis = sleepTime * 1000;
+			Thread.sleep(sleepMillis);
+			log.debug("Generando Lote Facturas B iva no discriminado");
+			
+			List<FB> facturasB = new ArrayList<FB>();
+			
+			FB fb = new FB(TipoDocumento.CUIT, cuitCliente, TipoConcepto.PRODUCTOS, importe);
+			facturasB.add(fb);
+			FB fb2 = new FB(TipoDocumento.OTRO, null, TipoConcepto.PRODUCTOS, importe);
+			facturasB.add(fb2);
+			FB fb3 = new FB(TipoDocumento.DNI, dniCliente, TipoConcepto.PRODUCTOS, importe);
+			facturasB.add(fb3);
+			
+			EsphoraResponse response = gateway.authorize(TipoComprobante.FACTURA_B, 1, cuitFacturador, facturasB);
+			
+			log.info("ESTADO: "+response.getEstado());
+			log.info("RESULTADO: "+response.getResultado());
+			
+			log.info("TOTAL APROVADAS: "+response.getTotalApproved());
+			for (ComprobanteFiscal cfAccepted : response.getAllApproved()) {
+				log.info("CAE:"+cfAccepted.getCae()+" - "+cfAccepted.getVtoCae());
+			}
+			
+			log.info("TOTAL RECHAZADAS: "+response.getTotalRejected());
+			for (ComprobanteFiscal cfRejected : response.getAllRejected()) {
+				List<EsphoraObservacion> obs = cfRejected.getObservaciones();
+				if(obs!=null){
+					for (EsphoraObservacion o : obs) {
+						log.error(o.getMessage());
+					}
+				}
+			}
+			
+			List<EsphoraError> errores = response.getGlobalErrors();
+			if(errores!=null){
+				for (EsphoraError error : errores) {
+					log.error(error.getMessage());
+				}
+			}
+			
+			assertNotNull("La respuesta de es nula", response);
+			assertNull("Se obtovieron errores en la llamada al servicio",errores);
+		} catch (FECAEException e) {
+			log.error("ERROR",e);
+			fail(e.getMessage());
+		} catch (InterruptedException e) {
+			log.error("ERROR",e);
+			fail(e.getMessage());
+		} 
+	}
 	
 	/**
 	 * @throws java.lang.Exception
