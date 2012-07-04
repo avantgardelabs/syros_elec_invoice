@@ -55,15 +55,14 @@ public class TestFB {
 	 */
 	@BeforeClass
 	public static void setUp() throws Exception {
-		cuitFacturador = new Cuit(30710370792L);
+		cuitFacturador = new Cuit(30525902672L);
 		cuitCliente = new Cuit(33679836299L);
-		dniCliente = new Dni(67983629L);
+		dniCliente = new Dni(16933413L);
 		gateway = new EsphoraGateway();
-		gateway.init();
-		tipoIva = TipoIva.VEINTIUNO;
-		importeStr = "117.7043";
+		tipoIva = TipoIva.CERO;
+		importeStr = "640";
 		//El objeto importe discrimina IVA automáticamente ya que le indicamos que se le pasa un valor NETO
-		importe = new Importe(Importe.calcularBruto(new BigDecimal(importeStr), tipoIva) , tipoIva, TipoImporte.BRUTO);
+		importe = new Importe(new BigDecimal(importeStr) , tipoIva, TipoImporte.BRUTO);
 		sleepTime = 60;
 	}
 	
@@ -72,50 +71,48 @@ public class TestFB {
 		System.out.println("-----------------------------------------------------------------------");
 	}
 	
-	@Test
-	public void FBSimple() {
-		try {
-			
-			log.debug("Generando Factura B iva no discriminado");
-			
-			FB fb = new FB(cuitFacturador, TipoDocumento.OTRO, null, TipoConcepto.PRODUCTOS,1 , importe);
-			
-			FB fbResp = gateway.authorize(fb);
-			
-			log.info("RESULTADO: "+fbResp.getResultado());
-			log.info("ESTADO: "+fbResp.getEstado());
-			log.info("CAE: "+fbResp.getCae());
-			log.info("Vto CAE: "+fbResp.getVtoCae());
-			List<EsphoraObservacion> errores = fbResp.getObservaciones();
-			if(errores!=null){
-				for (EsphoraObservacion error : errores) {
-					log.error(error.getMessage());
-				}
-			}
-		} catch (FECAEException e) {
-			log.error("ERROR",e);
-			fail(e.getMessage());
-		} 
-	}
+//	@Test
+//	public void FBSimple() {
+//		try {
+//			
+//			log.debug("Generando Factura B iva no discriminado");
+//			
+//			FB fb = new FB(cuitFacturador, TipoDocumento.OTRO, null, TipoConcepto.PRODUCTOS,1 , importe);
+//			
+//			FB fbResp = gateway.authorize(fb);
+//			
+//			log.info("RESULTADO: "+fbResp.getResultado());
+//			log.info("ESTADO: "+fbResp.getEstado());
+//			log.info("CAE: "+fbResp.getCae());
+//			log.info("Vto CAE: "+fbResp.getVtoCae());
+//			List<EsphoraObservacion> errores = fbResp.getObservaciones();
+//			if(errores!=null){
+//				for (EsphoraObservacion error : errores) {
+//					log.error(error.getMessage());
+//				}
+//			}
+//		} catch (FECAEException e) {
+//			log.error("ERROR",e);
+//			fail(e.getMessage());
+//		} 
+//	}
 	
 	@Test
 	public void FBMasiva() {
 		try {
-			log.debug("Sleeping for "+sleepTime+" secs due to ESPHORA reconnection problem");
-			int sleepMillis = sleepTime * 1000;
-			Thread.sleep(sleepMillis);
+			gateway.init();
+//			log.debug("Sleeping for "+sleepTime+" secs due to ESPHORA reconnection problem");
+//			int sleepMillis = sleepTime * 1000;
+//			Thread.sleep(sleepMillis);
 			log.debug("Generando Lote Facturas B iva no discriminado");
 			
 			List<FB> facturasB = new ArrayList<FB>();
 			
-			FB fb = new FB(TipoDocumento.CUIT, cuitCliente, TipoConcepto.PRODUCTOS, importe);
+			FB fb = new FB(TipoDocumento.DNI, dniCliente, TipoConcepto.SERVICIOS, importe);
 			facturasB.add(fb);
-			FB fb2 = new FB(TipoDocumento.OTRO, null, TipoConcepto.PRODUCTOS, importe);
-			facturasB.add(fb2);
-			FB fb3 = new FB(TipoDocumento.DNI, dniCliente, TipoConcepto.PRODUCTOS, importe);
-			facturasB.add(fb3);
-			
-			EsphoraResponse response = gateway.authorize(TipoComprobante.FACTURA_B, 1, cuitFacturador, facturasB);
+			log.debug("APAGAR");
+			Thread.sleep(10000);
+			EsphoraResponse response = gateway.authorize(TipoComprobante.FACTURA_B, 15, cuitFacturador, facturasB);
 			
 			log.info("ESTADO: "+response.getEstado());
 			log.info("RESULTADO: "+response.getResultado());
@@ -147,7 +144,7 @@ public class TestFB {
 		} catch (FECAEException e) {
 			log.error("ERROR",e);
 			fail(e.getMessage());
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			log.error("ERROR",e);
 			fail(e.getMessage());
 		} 

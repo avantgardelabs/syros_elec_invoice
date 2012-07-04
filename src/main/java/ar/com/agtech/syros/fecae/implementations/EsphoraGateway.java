@@ -183,10 +183,14 @@ public class EsphoraGateway implements FECAEGateway {
 		try {
 			resp = serviceProxy.fecaeSolicitar(req, cuitFacturador.getId());
 		} catch (SOAPFaultException e) {
-			log.error("SoapFaultException catched",e);
+			log.error("SoapFaultException Catched...",e);
 			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
-			throw new EsphoraInternalException("SOAP Response could not be parsed",ere);
-		}
+			throw new EsphoraInternalException("Unable to get a valid authorization response",ere);
+		} catch (Exception e) {
+			log.error("Exception Catched...",e);
+			EsphoraUnhandledException eue = new EsphoraUnhandledException("Unhandled WS Response Exception Catched",e);
+			throw new EsphoraInternalException("Unable to get a valid authorization response",eue);
+		} 
 		log.info("Done!");
 		return new EsphoraSolicitarResponse<C>(resp,cfList);
 	}
@@ -232,7 +236,11 @@ public class EsphoraGateway implements FECAEGateway {
 			log.error("SoapFaultException Catched...",e);
 			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
 			throw new EsphoraInternalException("Unable to get last authorized Invoice number",ere);
-		}
+		} catch (Exception e) {
+			log.error("Exception Catched...",e);
+			EsphoraUnhandledException eue = new EsphoraUnhandledException("Unhandled WS Response Exception Catched",e);
+			throw new EsphoraInternalException("Unable to get last authorized Invoice number",eue);
+		}  
 		
 
 		if(ultimoResp==null){

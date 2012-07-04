@@ -57,12 +57,9 @@ public class FB extends ComprobanteFiscal {
 	/**
 	 * Crea un Objeto de tipo Factura B listo para adjuntar a una lote de facturas del mismo tipo <br>
 	 * para facturar electr&oacute;nicamente.
-	 * @param cuitFacturador
 	 * @param tipoDocCliente
 	 * @param nroDocCliente
 	 * @param tipoConcepto
-	 * @param puntoDeVenta
-	 * @param nroComprobante
 	 * @param importe
 	 * @throws EsphoraInternalException
 	 */

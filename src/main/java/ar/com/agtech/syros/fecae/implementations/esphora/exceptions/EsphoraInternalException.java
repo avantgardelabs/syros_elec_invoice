@@ -4,6 +4,7 @@
 package ar.com.agtech.syros.fecae.implementations.esphora.exceptions;
 
 /**
+ * Thrown when an internal error happens in the gateway context, it wrappes remote errors and controls them.
  * @author Jorge Morando
  *
  */
