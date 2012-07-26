@@ -15,7 +15,7 @@ public interface AuthorizeSimple {
 	/**
 	 * Autoriza una factura.
 	 * 
-	 * @see ar.com.agtech.syros.esphora.conector.ComprobanteFiscal.Invoice
+	 * @see ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal
 	 * @return
 	 */
 	<C extends ComprobanteFiscal> C authorize(C comprobante) throws EsphoraInternalException;

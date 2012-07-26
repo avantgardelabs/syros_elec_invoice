@@ -27,18 +27,35 @@ public class Importe {
 	private static BigDecimal uni = new BigDecimal("1");
 	
 	/**
-	 * Construye un importe teniendo el neto y calculando el iva dependiendo del tipo de<br>
-	 * IVA que se suministre como par&aacute;metro.<br>
-	 * Por defecto el IVA ser&aacute; discriminado yse calcular&aacute; de acuerdo al tipo de IVA suministrado
-	 * @param total
+	 * Construye una instancia del objeto &quot;Importe&quot; desde el importe base y calculando el iva dependiendo del tipo de<br>
+	 * IVA que se suministre como par&aacute;metro. Concluyendo en 2 situaciones:<br>
+	 * <ol>
+	 * <li><p>Si el importe es de tipo &quot;Neto&quot; entonces se calcular&aacute; el IVA de acuerdo al tipo suministrado<br>
+	 * y se manejar&aacute; por separado.</p>
+	 * </p><p>
+	 * Bruto = <b>Neto</b> * TipoIva / 100 
+	 * </p></li>
+	 * <li><p>Si el importe es de tipo &quot;Bruto&quot; entonces se calcular&aacute; el IVA de acuerdo al tipo suministrado<br>
+	 * sin ser discriminado calculando así el neto sobre el importe suministrado BRUTO
+	 * </p><p>
+	 * Neto = <b>Bruto</b> / ((TipoIva / 100) + 1 ) 
+	 * </p></li>
+	 * </ol> 
+	 * <p>(#) - Es el par&aacute;metro "importe"</p>
+	 * @param importe
 	 * @param tipoIva
 	 */
-//	public Importe(BigDecimal importeNeto, TipoIva tipoIva){
-//		this.neto = importeNeto;
-//		this.tipoIva = tipoIva;
-//		this.discriminarIva = Boolean.TRUE;
-//		calcularImporte();
-//	}
+	public Importe(Importe.Tipo importe, TipoIva tipoIva){
+		if(importe instanceof Importe.Neto){
+			this.neto = importe.getImporte();
+			this.tipo = TipoImporte.NETO;
+		}else if(importe instanceof Importe.Bruto){
+			this.bruto = importe.getImporte();
+			this.tipo = TipoImporte.BRUTO;
+		}
+		this.tipoIva = tipoIva;
+		calcularImporte();
+	}
 	
 	/**
 	 * Construye un importe desde el importe base y calculando el iva dependiendo del tipo de<br>
@@ -62,14 +79,12 @@ public class Importe {
 	 */
 	public Importe(BigDecimal importe, TipoIva tipoIva, TipoImporte tipoImporte){
 		this.tipo = tipoImporte;
-		if(tipo.isNeto()){
-			this.neto = importe;
-			this.neto = neto.setScale(2, RoundingMode.HALF_UP);
-		}else{
-			this.bruto = importe;
-			this.bruto = bruto.setScale(2, RoundingMode.HALF_UP);
-		}
 		this.tipoIva = tipoIva;
+		if(tipo.isNeto()){
+			this.neto = importe.setScale(2, RoundingMode.HALF_UP);
+		}else{
+			this.bruto = importe.setScale(2, RoundingMode.HALF_UP);
+		}
 		calcularImporte();
 	}
 	
@@ -184,4 +199,43 @@ public class Importe {
 		}
 		return porcIva;
 	}
+	
+	/* static types */
+	
+	/**
+	 * Tipo de importe (Neto/Bruto) 
+	 * <br>Determinará el comportamiento que se tendrá al calcular el importe total de un comprobante fiscal
+	 * @see ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal
+	 * @author Jorge Morando
+	 */
+	private static interface Tipo {
+		BigDecimal getImporte();
+	}
+	
+	public static class Bruto implements Tipo{
+		
+		private BigDecimal importe;
+		
+		public Bruto(BigDecimal importe){
+			this.importe = importe; 
+		}
+		
+		public BigDecimal getImporte(){
+			return this.importe; 
+		}
+	}
+	
+	public static class Neto implements Tipo{
+		
+		private BigDecimal importe;
+		
+		public Neto(BigDecimal importe){
+			this.importe = importe; 
+		}
+		
+		public BigDecimal getImporte(){
+			return this.importe; 
+		}
+	}
+	
 }

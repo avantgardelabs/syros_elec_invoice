@@ -60,7 +60,7 @@ public class TestFA {
 		tipoIva = TipoIva.VEINTIUNO;
 		importeStr = "1117.7043";
 		//El objeto importe discrimina IVA automáticamente ya que le indicamos que se le pasa un valor NETO
-		importe = new Importe(Importe.calcularBruto(new BigDecimal(importeStr), tipoIva) , tipoIva, TipoImporte.BRUTO);
+		importe = new Importe(new Importe.Neto(new BigDecimal(importeStr)) , tipoIva);
 		sleepTime = 60;
 	}
 	

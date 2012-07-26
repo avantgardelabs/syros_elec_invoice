@@ -195,6 +195,14 @@ public class EsphoraGateway implements FECAEGateway {
 		return new EsphoraSolicitarResponse<C>(resp,cfList);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ar.com.agtech.syros.fecae.implementations.behaviors.Authorize#obtenerUltimoComprobante()
+	 */
+	@Override
+	public Integer obtenerUltimoComprobante(TipoComprobante tipoCbte, Integer ptoVta, Cuit cuitFacturador) throws EsphoraInternalException {
+		return getLastInvoiceNumber(tipoCbte, ptoVta, cuitFacturador);
+	}
+	
 	
 	/* *****************PRIVATE METHODS********************* */
 	

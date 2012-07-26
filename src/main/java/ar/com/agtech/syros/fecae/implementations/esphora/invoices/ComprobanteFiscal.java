@@ -26,7 +26,8 @@ import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoDocumento;
 import ar.com.agtech.syros.fecae.implementations.esphora.types.TipoMoneda;
 
 /**
- * El Comprobante a autorizar 
+ * El Comprobante a autorizar. Tipo abstracto de comprobante fiscal que almacenar&aacute; toda la informaci&oacute;n<br>
+ * que se enviar&aacute; a autorizar.
  * @author Jorge Morando
  *
  */

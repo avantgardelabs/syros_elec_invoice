@@ -19,7 +19,7 @@ public interface AuthorizeMultiple {
 	/**
 	 * Autoriza multiplesFacturas.
 	 * 
-	 * @see ar.com.agtech.syros.esphora.conector.ComprobanteFiscal.Invoice
+	 * @see ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal
 	 * @return List&lt;I extends Invoice&gt; invoices
 	 */
 	<C extends ComprobanteFiscal> EsphoraResponse authorize(TipoComprobante cbte, Integer ptoVta, Cuit cuitFaturador, List<C> comprobantes) throws EsphoraInternalException;

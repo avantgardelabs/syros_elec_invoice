@@ -62,7 +62,7 @@ public class TestFB {
 		tipoIva = TipoIva.CERO;
 		importeStr = "640";
 		//El objeto importe discrimina IVA automáticamente ya que le indicamos que se le pasa un valor NETO
-		importe = new Importe(new BigDecimal(importeStr) , tipoIva, TipoImporte.BRUTO);
+		importe = new Importe(new Importe.Bruto(new BigDecimal(importeStr)) , tipoIva);
 		sleepTime = 60;
 	}
 	
