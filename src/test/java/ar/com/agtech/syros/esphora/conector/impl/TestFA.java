@@ -113,7 +113,7 @@ public class TestFA {
 			FA fa3 = new FA(TipoDocumento.OTRO, null, TipoConcepto.PRODUCTOS, importe);
 			facturasA.add(fa3);
 			
-			EsphoraResponse response = gateway.authorize(TipoComprobante.FACTURA_A, 1, cuitFacturador, facturasA);
+			EsphoraResponse response = gateway.authorize(TipoComprobante.FACTURA_A, 1, cuitFacturador, facturasA, 0);
 			
 			log.info("ESTADO: "+response.getEstado());
 			log.info("RESULTADO: "+response.getResultado());

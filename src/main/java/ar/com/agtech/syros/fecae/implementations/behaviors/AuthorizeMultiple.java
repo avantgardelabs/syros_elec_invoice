@@ -22,5 +22,5 @@ public interface AuthorizeMultiple {
 	 * @see ar.com.agtech.syros.fecae.implementations.esphora.invoices.ComprobanteFiscal
 	 * @return List&lt;I extends Invoice&gt; invoices
 	 */
-	<C extends ComprobanteFiscal> EsphoraResponse authorize(TipoComprobante cbte, Integer ptoVta, Cuit cuitFaturador, List<C> comprobantes) throws EsphoraInternalException;
+	<C extends ComprobanteFiscal> EsphoraResponse authorize(TipoComprobante cbte, Integer ptoVta, Cuit cuitFaturador, List<C> comprobantes, Integer lastCompNumber) throws EsphoraInternalException;
 }

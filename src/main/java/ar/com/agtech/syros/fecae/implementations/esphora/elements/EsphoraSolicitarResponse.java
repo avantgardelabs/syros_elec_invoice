@@ -99,6 +99,7 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 				}
 			}
 		} catch (EsphoraInternalException e) {
+			e.printStackTrace();
 			throw e;
 		} catch (Exception e) {
 			log.error("Unhandled FECAE Implementation",e);

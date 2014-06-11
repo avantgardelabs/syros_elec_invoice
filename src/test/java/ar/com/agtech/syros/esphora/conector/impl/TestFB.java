@@ -112,7 +112,7 @@ public class TestFB {
 			facturasB.add(fb);
 			log.debug("APAGAR");
 			Thread.sleep(10000);
-			EsphoraResponse response = gateway.authorize(TipoComprobante.FACTURA_B, 15, cuitFacturador, facturasB);
+			EsphoraResponse response = gateway.authorize(TipoComprobante.FACTURA_B, 15, cuitFacturador, facturasB, 0);
 			
 			log.info("ESTADO: "+response.getEstado());
 			log.info("RESULTADO: "+response.getResultado());

@@ -124,7 +124,7 @@ public class EsphoraGateway implements FECAEGateway {
 		}
 		List<C> cfList = new ArrayList<C>();
 		cfList.add(cf);
-		EsphoraResponse response = authorize(cf.getTipo(), cf.getPuntoDeVenta(), cf.getCuitFacturador(), cfList);
+		EsphoraResponse response = authorize(cf.getTipo(), cf.getPuntoDeVenta(), cf.getCuitFacturador(), cfList, null);
 		if(response==null) throw new EsphoraInternalException("Null result response");
 		if(response.hasGlobalErrors()){
 			for (EsphoraError error : response.getGlobalErrors()) {
@@ -138,6 +138,7 @@ public class EsphoraGateway implements FECAEGateway {
 			return (C) response.getAllRejected().get(0);
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see ar.com.agtech.syros.esphora.conector.elements.behaviors.AuthorizeMultiple#authorize(java.util.List)
 	 */
@@ -146,53 +147,81 @@ public class EsphoraGateway implements FECAEGateway {
 			TipoComprobante tipoCbte, 
 			Integer ptoVta, 
 			Cuit cuitFacturador, 
-			List<C> cfList) throws EsphoraInternalException{
+			List<C> cfList,
+			Integer lastCompNumber) throws EsphoraInternalException{
 		
 		int nroCbteSecuencial;
 		
 		log.info("Retrieving last invoice number...");
 		nroCbteSecuencial = getLastInvoiceNumber(tipoCbte, ptoVta, cuitFacturador);
 		log.debug("Last invoice number is "+nroCbteSecuencial);
-		/*generamos la cabecera y el cuerpo del request*/
-		FECAECabRequest cabecera = generarCabecera(tipoCbte,ptoVta,cfList.size());
-		ArrayOfFECAEDetRequest lote = new ArrayOfFECAEDetRequest();
-		for (ComprobanteFiscal cf : cfList) {
-			nroCbteSecuencial++;
+		
+		if(lastCompNumber == nroCbteSecuencial){
 			
-			cf.setNumeroComprobante(nroCbteSecuencial);//set correct invoice number
+			try{
+				
+				log.debug("The last invoice number retrived from esphora is equal to syros");
+				log.debug("Waiting to send the request");
+				Thread.sleep(60000);
 			
-			FECAEDetRequest cuerpo = generarCuerpo(cf.getImporte(), 
-					cf.getConcepto(), 
-					cf.getTipoDocumentoDeCliente(),
-					cf.getDocumentoDeCliente().getId(),
-					nroCbteSecuencial,
-					cf.getMoneda());
+			} catch (InterruptedException e) {
+				log.error("ERROR",e);			
+			} 
 			
-			lote.getFECAEDetRequest().add(cuerpo);
+			/*generamos la cabecera y el cuerpo del request*/
+			FECAECabRequest cabecera = generarCabecera(tipoCbte,ptoVta,cfList.size());
+			ArrayOfFECAEDetRequest lote = new ArrayOfFECAEDetRequest();
+			for (ComprobanteFiscal cf : cfList) {
+				nroCbteSecuencial++;
+				
+				cf.setNumeroComprobante(nroCbteSecuencial);//set correct invoice number
+				
+				FECAEDetRequest cuerpo = generarCuerpo(cf.getImporte(), 
+						cf.getConcepto(), 
+						cf.getTipoDocumentoDeCliente(),
+						cf.getDocumentoDeCliente().getId(),
+						nroCbteSecuencial,
+						cf.getMoneda());
+				
+				lote.getFECAEDetRequest().add(cuerpo);
+			}
+			
+			checkReadyness(cfList);
+			
+			FECAERequest req = new FECAERequest();
+			req.setFeCabReq(cabecera);
+			req.setFeDetReq(lote);
+			
+			log.info("Requesting Authorization to Esphora...");
+			FECAEResponse resp = null;
+			
+			try {
+				resp = serviceProxy.fecaeSolicitar(req, cuitFacturador.getId());
+				
+				if(resp.getErrors()!=null){
+					for (Err e : resp.getErrors().getErr()) {
+						log.info("ERRORES ENCONTRADOS AL SOLICITAR AUTORIZACION");
+						log.info("Codigo: " + e.getCode());
+						log.info("Mensaje: " + e.getMsg());
+					} 
+				}
+				
+			} catch (SOAPFaultException e) {
+				log.error("SoapFaultException Catched...",e);
+				EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
+				throw new EsphoraInternalException("Unable to get a valid authorization response",ere);
+			} catch (Exception e) {
+				log.error("Exception Catched...",e);
+				EsphoraUnhandledException eue = new EsphoraUnhandledException("Unhandled WS Response Exception Catched",e);
+				throw new EsphoraInternalException("Unable to get a valid authorization response",eue);
+			} 
+			log.info("Done!");
+			return new EsphoraSolicitarResponse<C>(resp,cfList);
+
+		} else {
+			throw new EsphoraInternalException("The last authorized invoice number does not match by esphora, does not "
+					+ "match with the syros last invoice number. Tipo de Comprobante: " + tipoCbte);			
 		}
-		
-		checkReadyness(cfList);
-		
-		FECAERequest req = new FECAERequest();
-		req.setFeCabReq(cabecera);
-		req.setFeDetReq(lote);
-		
-		log.info("Requesting Authorization to Esphora...");
-		FECAEResponse resp = null;
-		
-		try {
-			resp = serviceProxy.fecaeSolicitar(req, cuitFacturador.getId());
-		} catch (SOAPFaultException e) {
-			log.error("SoapFaultException Catched...",e);
-			EsphoraRemoteException ere = new EsphoraRemoteException("Incorrect SOAP/xml Response",e);
-			throw new EsphoraInternalException("Unable to get a valid authorization response",ere);
-		} catch (Exception e) {
-			log.error("Exception Catched...",e);
-			EsphoraUnhandledException eue = new EsphoraUnhandledException("Unhandled WS Response Exception Catched",e);
-			throw new EsphoraInternalException("Unable to get a valid authorization response",eue);
-		} 
-		log.info("Done!");
-		return new EsphoraSolicitarResponse<C>(resp,cfList);
 	}
 	
 	/* (non-Javadoc)
