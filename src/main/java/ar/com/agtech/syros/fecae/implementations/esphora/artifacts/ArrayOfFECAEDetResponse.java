@@ -3,6 +3,7 @@ package ar.com.agtech.syros.fecae.implementations.esphora.artifacts;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -65,5 +66,14 @@ public class ArrayOfFECAEDetResponse {
         }
         return this.fecaeDetResponse;
     }
+
+	@Override
+	public String toString() {
+		final int maxLen = 10;
+		return "ArrayOfFECAEDetResponse [fecaeDetResponse="
+				+ (fecaeDetResponse != null ? fecaeDetResponse.subList(0,
+						Math.min(fecaeDetResponse.size(), maxLen)) : null)
+				+ "]";
+	}
 
 }

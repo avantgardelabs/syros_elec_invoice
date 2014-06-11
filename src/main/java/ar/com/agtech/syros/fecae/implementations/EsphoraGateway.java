@@ -156,6 +156,8 @@ public class EsphoraGateway implements FECAEGateway {
 		nroCbteSecuencial = getLastInvoiceNumber(tipoCbte, ptoVta, cuitFacturador);
 		log.debug("Last invoice number is "+nroCbteSecuencial);
 		
+		
+		
 		if(lastCompNumber == nroCbteSecuencial){
 			
 			try{
@@ -196,7 +198,12 @@ public class EsphoraGateway implements FECAEGateway {
 			FECAEResponse resp = null;
 			
 			try {
+				log.debug("Invocando a Esphora fecaeSolicitar");
+				log.debug("CuitFacturador: "+cuitFacturador.getId());
+				log.debug("FECAERequest: "+req);
 				resp = serviceProxy.fecaeSolicitar(req, cuitFacturador.getId());
+				log.debug("Esphora fecaeSolicitar ejecutado correctamente");
+				log.debug("FECAEResponse:"+resp);
 				
 				if(resp.getErrors()!=null){
 					for (Err e : resp.getErrors().getErr()) {

@@ -30,5 +30,13 @@ public class FECAECabResponse
     extends FECabResponse
 {
 
+	@Override
+	public String toString() {
+		return "FECAECabResponse [cuit=" + cuit + ", ptoVta=" + ptoVta
+				+ ", cbteTipo=" + cbteTipo + ", fchProceso=" + fchProceso
+				+ ", cantReg=" + cantReg + ", resultado=" + resultado
+				+ ", reproceso=" + reproceso + "]";
+	}
+
 
 }

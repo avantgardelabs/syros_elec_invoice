@@ -79,4 +79,9 @@ public class Err {
         this.msg = value;
     }
 
+	@Override
+	public String toString() {
+		return "Err [code=" + code + ", msg=" + msg + "]";
+	}
+
 }

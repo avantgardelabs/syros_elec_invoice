@@ -34,5 +34,20 @@ public class FECAEDetRequest
     extends FEDetRequest
 {
 
+	@Override
+	public String toString() {
+		return "FECAEDetRequest [concepto=" + concepto + ", docTipo=" + docTipo
+				+ ", docNro=" + docNro + ", cbteDesde=" + cbteDesde
+				+ ", cbteHasta=" + cbteHasta + ", cbteFch=" + cbteFch
+				+ ", impTotal=" + impTotal + ", impTotConc=" + impTotConc
+				+ ", impNeto=" + impNeto + ", impOpEx=" + impOpEx
+				+ ", impTrib=" + impTrib + ", impIVA=" + impIVA
+				+ ", fchServDesde=" + fchServDesde + ", fchServHasta="
+				+ fchServHasta + ", fchVtoPago=" + fchVtoPago + ", monId="
+				+ monId + ", monCotiz=" + monCotiz + ", cbtesAsoc=" + cbtesAsoc
+				+ ", tributos=" + tributos + ", iva=" + iva + ", opcionales="
+				+ opcionales + "]";
+	}
+	
 
 }

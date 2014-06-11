@@ -79,4 +79,9 @@ public class Evt {
         this.msg = value;
     }
 
+	@Override
+	public String toString() {
+		return "Evt [code=" + code + ", msg=" + msg + "]";
+	}
+
 }

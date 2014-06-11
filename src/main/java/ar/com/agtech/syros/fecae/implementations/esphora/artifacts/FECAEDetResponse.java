@@ -89,4 +89,14 @@ public class FECAEDetResponse
         this.caeFchVto = value;
     }
 
+	@Override
+	public String toString() {
+		return "FECAEDetResponse [cae=" + cae + ", caeFchVto=" + caeFchVto
+				+ ", concepto=" + concepto + ", docTipo=" + docTipo
+				+ ", docNro=" + docNro + ", cbteDesde=" + cbteDesde
+				+ ", cbteHasta=" + cbteHasta + ", cbteFch=" + cbteFch
+				+ ", resultado=" + resultado + ", observaciones="
+				+ observaciones + "]";
+	}
+
 }

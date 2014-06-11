@@ -87,4 +87,13 @@ public class FECAERequest {
         this.feDetReq = value;
     }
 
+	@Override
+	public String toString() {
+		return "FECAERequest [feCabReq=" + feCabReq + ", feDetReq=" + feDetReq
+				+ "]";
+	}
+    
+    
+    
+
 }

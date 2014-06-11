@@ -30,5 +30,11 @@ public class FECAECabRequest
     extends FECabRequest
 {
 
+	@Override
+	public String toString() {
+		return "FECAECabRequest [cantReg=" + cantReg + ", ptoVta=" + ptoVta
+				+ ", cbteTipo=" + cbteTipo + "]";
+	}
+	
 
 }

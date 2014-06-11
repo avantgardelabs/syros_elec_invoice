@@ -31,7 +31,7 @@ public class EsphoraSolicitarResponse<C extends ComprobanteFiscal> implements Es
 	private List<C> comprobantesAceptados;
 	private List<C> comprobantesRechazados;
 	
-	private List<EsphoraError> globalErrors;
+	private List<EsphoraError> globalErrors = new ArrayList<EsphoraError>();
 	
 	private int estado;
 	private String resultado;

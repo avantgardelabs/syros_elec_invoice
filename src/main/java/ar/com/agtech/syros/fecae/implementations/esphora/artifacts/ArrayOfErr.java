@@ -3,6 +3,7 @@ package ar.com.agtech.syros.fecae.implementations.esphora.artifacts;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -65,5 +66,13 @@ public class ArrayOfErr {
         }
         return this.err;
     }
+
+	@Override
+	public String toString() {
+		final int maxLen = 10;
+		return "ArrayOfErr [err="
+				+ (err != null ? err.subList(0, Math.min(err.size(), maxLen))
+						: null) + "]";
+	}
 
 }

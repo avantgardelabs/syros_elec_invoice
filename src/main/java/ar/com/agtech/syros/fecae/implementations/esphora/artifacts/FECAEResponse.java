@@ -143,4 +143,10 @@ public class FECAEResponse {
         this.errors = value;
     }
 
+	@Override
+	public String toString() {
+		return "FECAEResponse [feCabResp=" + feCabResp + ", feDetResp="
+				+ feDetResp + ", events=" + events + ", errors=" + errors + "]";
+	}
+
 }
